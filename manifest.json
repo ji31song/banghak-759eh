@@ -1,10 +1,10 @@
-{
-  "name": "2026 여름방학 관리",
-  "short_name": "방학관리",
+﻿{
+  "name": "권씨네 일정관리",
+  "short_name": "권씨네일정",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#FFF8EE",
-  "theme_color": "#FFB74D",
+  "background_color": "#F5F3F0",
+  "theme_color": "#B08D57",
   "icons": [
     {
       "src": "icon.svg",

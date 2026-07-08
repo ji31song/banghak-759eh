@@ -1,41 +1,41 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#FFB74D">
+<meta name="theme-color" content="#B08D57">
 <meta name="robots" content="noindex, nofollow">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<title>2026 여름방학 관리</title>
+<title>권씨네 일정관리</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
     font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-    background: #FFF8EE;
-    color: #3E3A36;
+    background: #F5F3F0;
+    color: #2F2D2A;
     padding-bottom: 40px;
   }
   .wrap { max-width: 520px; margin: 0 auto; padding: 16px; }
 
   header { text-align: center; padding: 12px 0 4px; position: relative; }
   header h1 { font-size: 22px; }
-  header .today { font-size: 13px; color: #8A8177; margin-top: 4px; }
+  header .today { font-size: 13px; color: #8B8680; margin-top: 4px; }
   #syncStatus {
     display: inline-block; margin-top: 6px; font-size: 11px;
-    background: #F1E9DD; color: #6E6558; padding: 3px 10px; border-radius: 999px;
+    background: #ECEAE6; color: #6B6661; padding: 3px 10px; border-radius: 999px;
   }
-  #syncStatus.on { background: #DDF3E4; color: #1E7B45; }
+  #syncStatus.on { background: #E2EEE6; color: #3D7A55; }
 
   .dday-row { display: flex; gap: 10px; margin-top: 14px; }
   .dday-card {
     flex: 1; border-radius: 16px; padding: 14px 12px; color: #fff; text-align: center;
     box-shadow: 0 3px 10px rgba(0,0,0,0.08);
   }
-  .dday-card.junwoo { background: linear-gradient(135deg, #5B9FE3, #3D7CC9); }
-  .dday-card.yujin  { background: linear-gradient(135deg, #F58BA0, #EE6584); }
+  .dday-card.junwoo { background: #51749B; }
+  .dday-card.yujin  { background: #B07A88; }
   .dday-card .kid-name { font-size: 14px; opacity: 0.95; }
   .dday-card .dday { font-size: 26px; font-weight: 800; margin: 4px 0; }
   .dday-card .sub { font-size: 11px; opacity: 0.9; line-height: 1.5; }
@@ -43,10 +43,10 @@
   .tabs { display: flex; gap: 8px; margin-top: 20px; }
   .tab {
     flex: 1; padding: 12px 0; border: none; border-radius: 14px; font-size: 16px; font-weight: 700;
-    background: #F1E9DD; color: #8A8177; cursor: pointer;
+    background: #ECEAE6; color: #8B8680; cursor: pointer;
   }
-  .tab.active.junwoo { background: #3D7CC9; color: #fff; }
-  .tab.active.yujin  { background: #EE6584; color: #fff; }
+  .tab.active.junwoo { background: #51749B; color: #fff; }
+  .tab.active.yujin  { background: #B07A88; color: #fff; }
 
   section.card {
     background: #fff; border-radius: 18px; padding: 16px; margin-top: 14px;
@@ -54,47 +54,47 @@
   }
   .card h2 { font-size: 16px; display: flex; align-items: center; justify-content: space-between; }
   .card h2 .edit-btn {
-    font-size: 12px; font-weight: 600; border: 1px solid #D8CFC2; background: #fff;
-    color: #8A8177; border-radius: 999px; padding: 4px 12px; cursor: pointer;
+    font-size: 12px; font-weight: 600; border: 1px solid #D3CFC8; background: #fff;
+    color: #8B8680; border-radius: 999px; padding: 4px 12px; cursor: pointer;
   }
-  .card h2 .edit-btn.editing { background: #3E3A36; color: #fff; border-color: #3E3A36; }
+  .card h2 .edit-btn.editing { background: #2F2D2A; color: #fff; border-color: #2F2D2A; }
 
   .date-nav { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 12px 0 4px; }
   .date-nav button {
-    border: none; background: #F1E9DD; border-radius: 10px; width: 34px; height: 34px;
-    font-size: 15px; cursor: pointer; color: #6E6558;
+    border: none; background: #ECEAE6; border-radius: 10px; width: 34px; height: 34px;
+    font-size: 15px; cursor: pointer; color: #6B6661;
   }
   .date-nav .cur { font-size: 15px; font-weight: 700; min-width: 140px; text-align: center; }
   .date-nav .today-btn { width: auto; padding: 0 10px; font-size: 12px; }
 
-  .progress-outer { background: #F1E9DD; border-radius: 999px; height: 10px; margin: 10px 0 4px; overflow: hidden; }
+  .progress-outer { background: #ECEAE6; border-radius: 999px; height: 10px; margin: 10px 0 4px; overflow: hidden; }
   .progress-inner { height: 100%; border-radius: 999px; transition: width 0.3s; }
-  .progress-label { font-size: 12px; color: #8A8177; text-align: right; }
+  .progress-label { font-size: 12px; color: #8B8680; text-align: right; }
 
   ul.checklist { list-style: none; margin-top: 10px; }
   ul.checklist li {
     display: flex; align-items: center; gap: 10px; padding: 11px 6px;
-    border-bottom: 1px dashed #EFE7DA; font-size: 15px;
+    border-bottom: 1px dashed #EAE7E2; font-size: 15px;
   }
   ul.checklist li:last-child { border-bottom: none; }
   ul.checklist input[type=checkbox] { width: 22px; height: 22px; accent-color: currentColor; flex-shrink: 0; }
-  ul.checklist li.done span.txt { text-decoration: line-through; color: #B8AE9F; }
+  ul.checklist li.done span.txt { text-decoration: line-through; color: #B2ADA6; }
   ul.checklist .del {
     margin-left: auto; border: none; background: #FDE8E8; color: #D64545;
     border-radius: 8px; width: 26px; height: 26px; font-size: 14px; cursor: pointer;
   }
   .add-row { display: flex; gap: 8px; margin-top: 12px; }
   .add-row input {
-    flex: 1; border: 1.5px solid #E4DACB; border-radius: 10px; padding: 10px 12px; font-size: 14px;
-    background: #FFFDF9;
+    flex: 1; border: 1.5px solid #DBD7D1; border-radius: 10px; padding: 10px 12px; font-size: 14px;
+    background: #FCFBFA;
   }
   .add-row button {
     border: none; border-radius: 10px; padding: 0 16px; font-size: 14px; font-weight: 700;
-    background: #3E3A36; color: #fff; cursor: pointer;
+    background: #2F2D2A; color: #fff; cursor: pointer; white-space: nowrap;
   }
 
   table.timetable { width: 100%; border-collapse: collapse; margin-top: 10px; }
-  table.timetable td { padding: 9px 6px; border-bottom: 1px dashed #EFE7DA; font-size: 14px; }
+  table.timetable td { padding: 9px 6px; border-bottom: 1px dashed #EAE7E2; font-size: 14px; }
   table.timetable tr:last-child td { border-bottom: none; }
   table.timetable td.time { width: 70px; font-weight: 700; white-space: nowrap; }
   table.timetable .del {
@@ -103,36 +103,94 @@
   }
   .add-row.schedule input.time-in { flex: 0 0 80px; }
 
-  .cal-legend { display: flex; gap: 14px; font-size: 12px; color: #6E6558; margin-top: 8px; }
+  .cal-legend { display: flex; gap: 14px; font-size: 12px; color: #6B6661; margin-top: 8px; }
   .cal-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; }
   .cal-month { margin-top: 14px; }
   .cal-month h3 { font-size: 14px; text-align: center; margin-bottom: 8px; }
   .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
-  .cal-grid .dow { text-align: center; font-size: 11px; color: #B8AE9F; padding: 3px 0; }
-  .cal-grid .dow.sun { color: #E07070; }
+  .cal-grid .dow { text-align: center; font-size: 11px; color: #B2ADA6; padding: 3px 0; }
+  .cal-grid .dow.sun { color: #C96B6B; }
   .cal-cell {
     position: relative; text-align: center; padding: 6px 0 10px; border-radius: 10px;
     font-size: 13px; cursor: pointer; min-height: 40px;
   }
   .cal-cell.other { visibility: hidden; }
-  .cal-cell.sun .num { color: #E07070; }
+  .cal-cell.sun .num { color: #C96B6B; }
   .cal-cell.today .num {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 24px; height: 24px; border-radius: 50%; background: #FFB74D; color: #fff; font-weight: 800;
+    width: 24px; height: 24px; border-radius: 50%; background: #B08D57; color: #fff; font-weight: 800;
   }
-  .cal-cell.selected { background: #FFF1DC; box-shadow: inset 0 0 0 2px #FFB74D; }
+  .cal-cell.selected { background: #EFEBE4; box-shadow: inset 0 0 0 2px #B08D57; }
   .cal-bars { position: absolute; left: 15%; right: 15%; bottom: 3px; display: flex; flex-direction: column; gap: 2px; }
   .cal-bars .bar { height: 3px; border-radius: 2px; }
-  .bar.junwoo { background: #5B9FE3; }
-  .bar.yujin { background: #EE6584; }
+  .bar.junwoo { background: #51749B; }
+  .bar.yujin { background: #B07A88; }
 
-  footer { text-align: center; font-size: 11px; color: #C4BAAB; margin-top: 24px; }
+  .view-toggle { display: flex; gap: 4px; }
+  .view-toggle button {
+    border: 1px solid #D3CFC8; background: #fff; color: #8B8680; font-size: 12px;
+    font-weight: 600; padding: 4px 12px; border-radius: 999px; cursor: pointer;
+  }
+  .view-toggle button.on { background: #2F2D2A; color: #fff; border-color: #2F2D2A; }
+  .evt-day-title { font-size: 13px; color: #8B8680; margin-top: 10px; }
+  .evt-empty { text-align: center; color: #BDB8B1; font-size: 13px; padding: 14px 0 4px; }
+  ul.evt-list { list-style: none; margin-top: 6px; }
+  ul.evt-list li {
+    display: flex; align-items: center; gap: 10px; padding: 10px 6px;
+    border-bottom: 1px dashed #EAE7E2; font-size: 15px;
+  }
+  ul.evt-list li:last-child { border-bottom: none; }
+  ul.evt-list .evt-time { font-weight: 700; min-width: 52px; font-size: 14px; }
+  ul.evt-list .del {
+    margin-left: auto; border: none; background: #FDE8E8; color: #D64545;
+    border-radius: 8px; width: 26px; height: 26px; font-size: 14px; cursor: pointer;
+  }
+  ul.week-list { list-style: none; margin-top: 8px; }
+  ul.week-list li {
+    display: flex; gap: 10px; padding: 9px 8px; border-bottom: 1px dashed #EAE7E2;
+    font-size: 14px; cursor: pointer; align-items: flex-start;
+  }
+  ul.week-list li:last-child { border-bottom: none; }
+  ul.week-list li.todayrow { background: #F1EDE6; border-radius: 10px; }
+  .week-day { min-width: 64px; font-weight: 700; }
+  .week-evts { color: #6B6661; display: flex; flex-direction: column; gap: 3px; }
+  .week-empty { color: #D3CFC8; }
+  .cal-cell .evt-dot {
+    position: absolute; top: 2px; right: 6px; width: 5px; height: 5px;
+    border-radius: 50%; background: #B08D57;
+  }
+
+  footer { text-align: center; font-size: 11px; color: #BDB8B1; margin-top: 24px; }
+
+  #lockScreen {
+    position: fixed; inset: 0; z-index: 100; background: #F5F3F0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+    padding: 24px;
+  }
+  #lockScreen .emoji { font-size: 52px; }
+  #lockScreen p { font-size: 15px; color: #6B6661; }
+  #pinInput {
+    font-size: 26px; text-align: center; letter-spacing: 10px; width: 190px;
+    border: 2px solid #DBD7D1; border-radius: 14px; padding: 12px; background: #fff;
+  }
+  #pinBtn {
+    border: none; background: #B08D57; color: #fff; font-size: 16px; font-weight: 700;
+    border-radius: 14px; padding: 12px 40px; cursor: pointer;
+  }
+  #pinError { color: #D64545; font-size: 13px; min-height: 18px; }
 </style>
 </head>
 <body>
+<div id="lockScreen">
+  <div class="emoji">🌻</div>
+  <p>가족 비밀번호를 입력해 주세요</p>
+  <input id="pinInput" type="password" inputmode="numeric" maxlength="6" autocomplete="off">
+  <div id="pinError"></div>
+  <button id="pinBtn">확인</button>
+</div>
 <div class="wrap">
   <header>
-    <h1>🌻 2026 여름방학 관리</h1>
+    <h1>🌻 권씨네 일정관리</h1>
     <div class="today" id="todayLabel"></div>
     <span id="syncStatus">⚪ 이 기기에만 저장 중</span>
   </header>
@@ -162,6 +220,21 @@
   </section>
 
   <section class="card">
+    <h2>📆 일정
+      <span class="view-toggle">
+        <button id="viewDay" class="on">일간</button>
+        <button id="viewWeek">주간</button>
+      </span>
+    </h2>
+    <div id="eventsArea"></div>
+    <div class="add-row schedule" id="evtAddRow">
+      <input class="time-in" id="newEvtTime" placeholder="시간" maxlength="11">
+      <input id="newEvtText" placeholder="일정 내용 (예: 수학학원)" maxlength="40">
+      <button id="addEvtBtn">추가</button>
+    </div>
+  </section>
+
+  <section class="card">
     <h2>⏰ 생활계획표 <button class="edit-btn" id="editSchedBtn">편집</button></h2>
     <table class="timetable"><tbody id="schedBody"></tbody></table>
     <div class="add-row schedule" id="schedAddRow" style="display:none">
@@ -172,10 +245,16 @@
   </section>
 
   <section class="card">
-    <h2>📅 방학 달력</h2>
-    <div class="cal-legend">
+    <h2>📅 달력</h2>
+    <div class="cal-legend" id="calLegend">
       <span><i class="bar junwoo" style="height:10px"></i>준우 방학 (7/21 ~ 8/13)</span>
       <span><i class="bar yujin" style="height:10px"></i>유진 방학 (7/23 ~ 8/25)</span>
+    </div>
+    <div class="date-nav">
+      <button id="prevMonth">◀</button>
+      <span class="cur" id="curMonth"></span>
+      <button id="nextMonth">▶</button>
+      <button class="today-btn" id="goThisMonth">이번 달</button>
     </div>
     <div id="calendar"></div>
   </section>
@@ -185,11 +264,34 @@
 
 <script src="firebase-config.js"></script>
 <script type="module">
+/* ===== 잠금 화면 ===== */
+const PIN_HASH = "b5076a1fecbea736a5f27ff97e0b5d777c94d0b5cf2bad72291d63657fc6355f";
+async function sha256(text) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+async function tryUnlock() {
+  const input = document.getElementById("pinInput");
+  if (await sha256(input.value.trim()) === PIN_HASH) {
+    localStorage.setItem("banghak-unlock", "1");
+    document.getElementById("lockScreen").remove();
+  } else {
+    document.getElementById("pinError").textContent = "비밀번호가 맞지 않아요";
+    input.value = "";
+  }
+}
+if (localStorage.getItem("banghak-unlock") === "1") {
+  document.getElementById("lockScreen").remove();
+} else {
+  document.getElementById("pinBtn").addEventListener("click", tryUnlock);
+  document.getElementById("pinInput").addEventListener("keydown", e => { if (e.key === "Enter") tryUnlock(); });
+}
+
 /* ===== 기본 정보 ===== */
 const KIDS = {
-  junwoo: { name: "준우", full: "준우", grade: "중1", color: "#3D7CC9",
+  junwoo: { name: "준우", full: "준우", grade: "중1", color: "#51749B",
             vacStart: "2026-07-21", schoolStart: "2026-08-14" },
-  yujin:  { name: "유진", full: "유진", grade: "초5", color: "#EE6584",
+  yujin:  { name: "유진", full: "유진", grade: "초5", color: "#B07A88",
             vacStart: "2026-07-23", schoolStart: "2026-08-26" },
 };
 const DEFAULT_DATA = {
@@ -243,6 +345,8 @@ let currentKid = "junwoo";
 let selectedDate = todayStr();
 let editingItems = false;
 let editingSched = false;
+let eventsView = "day";
+let calCursor = { y: new Date().getFullYear(), m: new Date().getMonth() + 1 };
 
 function todayStr() {
   const d = new Date();
@@ -320,8 +424,12 @@ function normalize(v) {
     if (!v[kid].items) v[kid].items = [];
     if (!v[kid].schedule) v[kid].schedule = [];
     if (!v[kid].checks) v[kid].checks = {};
+    if (!v[kid].events) v[kid].events = {};
     if (!Array.isArray(v[kid].items)) v[kid].items = Object.values(v[kid].items);
     if (!Array.isArray(v[kid].schedule)) v[kid].schedule = Object.values(v[kid].schedule);
+    for (const d of Object.keys(v[kid].events)) {
+      if (!Array.isArray(v[kid].events[d])) v[kid].events[d] = Object.values(v[kid].events[d]);
+    }
   }
   return v;
 }
@@ -332,6 +440,7 @@ function render() {
   renderDday();
   renderTabs();
   renderChecklist();
+  renderEvents();
   renderSchedule();
   renderCalendar();
 }
@@ -412,6 +521,72 @@ function renderChecklist() {
   btn.classList.toggle("editing", editingItems);
 }
 
+function eventsOf(kidKey, dateStr) {
+  const ev = data[kidKey].events || {};
+  return ev[dateStr] || [];
+}
+
+function renderEvents() {
+  const color = KIDS[currentKid].color;
+  const area = document.getElementById("eventsArea");
+  document.getElementById("viewDay").classList.toggle("on", eventsView === "day");
+  document.getElementById("viewWeek").classList.toggle("on", eventsView === "week");
+  document.getElementById("evtAddRow").style.display = eventsView === "day" ? "flex" : "none";
+  area.innerHTML = "";
+
+  if (eventsView === "day") {
+    const list = eventsOf(currentKid, selectedDate);
+    let html = `<div class="evt-day-title">${fmtDate(selectedDate)}</div>`;
+    if (list.length === 0) {
+      html += `<div class="evt-empty">일정이 없어요. 아래에서 추가해 보세요!</div>`;
+    } else {
+      html += `<ul class="evt-list">` + list.map((e, i) => `
+        <li>
+          <span class="evt-time" style="color:${color}">${escapeHtml(e.time || "")}</span>
+          <span>${escapeHtml(e.text)}</span>
+          <button class="del" data-i="${i}">✕</button>
+        </li>`).join("") + `</ul>`;
+    }
+    area.innerHTML = html;
+    area.querySelectorAll(".del").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const arr = list.filter((_, i) => i !== Number(btn.dataset.i));
+        store.write(`${currentKid}/events/${selectedDate}`, arr.length ? arr : null);
+      });
+    });
+  } else {
+    const weekStart = shiftDate(selectedDate, -parseDate(selectedDate).getDay());
+    const weekEnd = shiftDate(weekStart, 6);
+    const label = `${parseDate(weekStart).getMonth()+1}/${parseDate(weekStart).getDate()} ~ ${parseDate(weekEnd).getMonth()+1}/${parseDate(weekEnd).getDate()}`;
+    const today = todayStr();
+    let html = `
+      <div class="date-nav">
+        <button id="prevWeek">◀</button>
+        <span class="cur">${label}</span>
+        <button id="nextWeek">▶</button>
+      </div><ul class="week-list">`;
+    for (let i = 0; i < 7; i++) {
+      const ds = shiftDate(weekStart, i);
+      const list = eventsOf(currentKid, ds);
+      const evts = list.length
+        ? list.map(e => `<span>${e.time ? `<b style="color:${color}">${escapeHtml(e.time)}</b> ` : ""}${escapeHtml(e.text)}</span>`).join("")
+        : `<span class="week-empty">—</span>`;
+      html += `
+        <li class="${ds === today ? "todayrow" : ""}" data-date="${ds}">
+          <span class="week-day" style="${ds === today ? `color:${color}` : ""}">${parseDate(ds).getMonth()+1}/${parseDate(ds).getDate()} (${["일","월","화","수","목","금","토"][parseDate(ds).getDay()]})</span>
+          <span class="week-evts">${evts}</span>
+        </li>`;
+    }
+    html += `</ul>`;
+    area.innerHTML = html;
+    document.getElementById("prevWeek").addEventListener("click", () => { selectedDate = shiftDate(selectedDate, -7); render(); });
+    document.getElementById("nextWeek").addEventListener("click", () => { selectedDate = shiftDate(selectedDate, 7); render(); });
+    area.querySelectorAll(".week-list li").forEach(li => {
+      li.addEventListener("click", () => { selectedDate = li.dataset.date; eventsView = "day"; render(); });
+    });
+  }
+}
+
 function renderSchedule() {
   const kid = data[currentKid];
   const tbody = document.getElementById("schedBody");
@@ -439,30 +614,35 @@ function renderCalendar() {
   const cal = document.getElementById("calendar");
   cal.innerHTML = "";
   const today = todayStr();
-  for (const [year, month] of [[2026, 7], [2026, 8]]) {
-    const first = new Date(year, month-1, 1);
-    const daysInMonth = new Date(year, month, 0).getDate();
-    let html = `<div class="cal-month"><h3>${year}년 ${month}월</h3><div class="cal-grid">`;
-    ["일","월","화","수","목","금","토"].forEach((d, i) => {
-      html += `<div class="dow ${i === 0 ? "sun" : ""}">${d}</div>`;
-    });
-    for (let i = 0; i < first.getDay(); i++) html += `<div class="cal-cell other"></div>`;
-    for (let d = 1; d <= daysInMonth; d++) {
-      const ds = `${year}-${String(month).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-      const dow = new Date(year, month-1, d).getDay();
-      let bars = "";
-      for (const [key, kid] of Object.entries(KIDS)) {
-        if (ds >= kid.vacStart && ds < kid.schoolStart) bars += `<div class="bar ${key}"></div>`;
-      }
-      const cls = ["cal-cell"];
-      if (dow === 0) cls.push("sun");
-      if (ds === today) cls.push("today");
-      if (ds === selectedDate) cls.push("selected");
-      html += `<div class="${cls.join(" ")}" data-date="${ds}"><span class="num">${d}</span><div class="cal-bars">${bars}</div></div>`;
+  const { y: year, m: month } = calCursor;
+  document.getElementById("curMonth").textContent = `${year}년 ${month}월`;
+  document.getElementById("calLegend").style.display =
+    (year === 2026 && (month === 7 || month === 8)) ? "flex" : "none";
+
+  const first = new Date(year, month-1, 1);
+  const daysInMonth = new Date(year, month, 0).getDate();
+  let html = `<div class="cal-month"><div class="cal-grid">`;
+  ["일","월","화","수","목","금","토"].forEach((d, i) => {
+    html += `<div class="dow ${i === 0 ? "sun" : ""}">${d}</div>`;
+  });
+  for (let i = 0; i < first.getDay(); i++) html += `<div class="cal-cell other"></div>`;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ds = `${year}-${String(month).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const dow = new Date(year, month-1, d).getDay();
+    let bars = "";
+    for (const [key, kid] of Object.entries(KIDS)) {
+      if (ds >= kid.vacStart && ds < kid.schoolStart) bars += `<div class="bar ${key}"></div>`;
     }
-    html += `</div></div>`;
-    cal.insertAdjacentHTML("beforeend", html);
+    const dot = eventsOf(currentKid, ds).length ? `<div class="evt-dot"></div>` : "";
+    const cls = ["cal-cell"];
+    if (dow === 0) cls.push("sun");
+    if (ds === today) cls.push("today");
+    if (ds === selectedDate) cls.push("selected");
+    html += `<div class="${cls.join(" ")}" data-date="${ds}">${dot}<span class="num">${d}</span><div class="cal-bars">${bars}</div></div>`;
   }
+  html += `</div></div>`;
+  cal.insertAdjacentHTML("beforeend", html);
+
   cal.querySelectorAll(".cal-cell[data-date]").forEach(cell => {
     cell.addEventListener("click", () => {
       selectedDate = cell.dataset.date;
@@ -470,6 +650,14 @@ function renderCalendar() {
       document.querySelector(".tabs").scrollIntoView({ behavior: "smooth" });
     });
   });
+}
+
+function shiftMonth(n) {
+  let m = calCursor.m + n, y = calCursor.y;
+  if (m < 1) { m = 12; y--; }
+  if (m > 12) { m = 1; y++; }
+  calCursor = { y, m };
+  renderCalendar();
 }
 
 function escapeHtml(s) {
@@ -483,6 +671,25 @@ document.querySelectorAll(".tab").forEach(t => {
 document.getElementById("prevDay").addEventListener("click", () => { selectedDate = shiftDate(selectedDate, -1); render(); });
 document.getElementById("nextDay").addEventListener("click", () => { selectedDate = shiftDate(selectedDate, 1); render(); });
 document.getElementById("goToday").addEventListener("click", () => { selectedDate = todayStr(); render(); });
+document.getElementById("prevMonth").addEventListener("click", () => shiftMonth(-1));
+document.getElementById("nextMonth").addEventListener("click", () => shiftMonth(1));
+document.getElementById("goThisMonth").addEventListener("click", () => {
+  const t = new Date();
+  calCursor = { y: t.getFullYear(), m: t.getMonth() + 1 };
+  renderCalendar();
+});
+document.getElementById("viewDay").addEventListener("click", () => { eventsView = "day"; renderEvents(); });
+document.getElementById("viewWeek").addEventListener("click", () => { eventsView = "week"; renderEvents(); });
+document.getElementById("addEvtBtn").addEventListener("click", () => {
+  const timeIn = document.getElementById("newEvtTime");
+  const textIn = document.getElementById("newEvtText");
+  const text = textIn.value.trim();
+  if (!text) return;
+  const list = [...eventsOf(currentKid, selectedDate), { time: timeIn.value.trim(), text }]
+    .sort((a, b) => (a.time || "99:99").localeCompare(b.time || "99:99"));
+  timeIn.value = ""; textIn.value = "";
+  store.write(`${currentKid}/events/${selectedDate}`, list);
+});
 document.getElementById("editItemsBtn").addEventListener("click", () => { editingItems = !editingItems; render(); });
 document.getElementById("editSchedBtn").addEventListener("click", () => { editingSched = !editingSched; render(); });
 document.getElementById("addItemBtn").addEventListener("click", () => {
