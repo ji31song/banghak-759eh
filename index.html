@@ -102,6 +102,10 @@
     border: none; border-radius: 10px; padding: 0 16px; font-size: 14px; font-weight: 700;
     background: #2F2D2A; color: #fff; cursor: pointer; white-space: nowrap;
   }
+  .add-row select {
+    border: 1.5px solid #DBD7D1; border-radius: 10px; padding: 10px 6px; font-size: 13px;
+    background: #FCFBFA; font-family: inherit; color: inherit;
+  }
 
   .sched-hint { font-size: 11px; color: #B2ADA6; text-align: center; margin-top: 10px; }
 
@@ -124,16 +128,20 @@
     display: flex; align-items: center; justify-content: center;
   }
   #schedList .s-time {
-    flex: 0 0 105px; border-right: 1px solid #B8B4AC; padding: 3px 8px;
+    flex: 0 0 90px; border-right: 1px solid #B8B4AC; padding: 0; position: relative;
     display: flex; flex-direction: column; justify-content: center; text-align: center;
-    font-size: 11px; font-weight: 700; color: #4A7DB5; line-height: 1.4;
+    font-size: 10px; font-weight: 700; color: #4A7DB5; line-height: 1.4;
   }
-  #schedList .s-time input {
-    width: 100%; flex: 1; border: none; background: transparent; font: inherit; color: inherit;
-    text-align: center; padding: 0; outline: none; cursor: pointer;
+  #schedList .t-btn {
+    flex: 1; border: none; background: transparent; font-family: inherit;
+    font-size: 10px; font-weight: 700; color: #4A7DB5; cursor: pointer; padding: 0;
   }
-  #schedList .s-time input::-webkit-calendar-picker-indicator { display: none; }
-  #schedList .s-time input.empty { color: transparent; }
+  #schedList .t-btn.empty { color: #C8C4BD; font-weight: 400; font-size: 9px; }
+  #schedList .t-btn + .t-btn { border-top: 1px dashed #E2DED7; }
+  #schedList .s-time input[type=time] {
+    position: absolute; left: 0; bottom: 0; width: 1px; height: 1px;
+    opacity: 0; pointer-events: none; border: 0; padding: 0;
+  }
   #schedList input.s-text {
     flex: 1; min-width: 0; border: none; background: transparent;
     font-size: 13px; padding: 8px 2px; outline: none; align-self: center;
@@ -291,7 +299,19 @@
       <ul id="schedList"></ul>
       <div id="schedTimeline"></div>
     </div>
-    <div class="sched-hint">시간 칸을 누르면 시계가 떠요 · 한 번 더 누르면 끝나는 시간도 넣을 수 있어요</div>
+    <div class="sched-hint">시작시간 · 종료시간 버튼을 누르면 시계가 떠요</div>
+  </section>
+
+  <section class="card" id="commentCard">
+    <h2><span class="h2t"><svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Comment</span></h2>
+    <div id="commentList"></div>
+    <div class="add-row">
+      <select id="commentWho">
+        <option>엄마</option><option>아빠</option><option>준우</option><option>유진</option>
+      </select>
+      <input id="commentText" placeholder="일정에 한마디 남기기" maxlength="60">
+      <button id="commentAdd">추가</button>
+    </div>
   </section>
 
   <section class="card">
@@ -488,6 +508,10 @@ function normalize(v) {
     if (!v[kid].grapes) v[kid].grapes = {};
     if (!v[kid].phonebook) v[kid].phonebook = [];
     if (!Array.isArray(v[kid].phonebook)) v[kid].phonebook = Object.values(v[kid].phonebook);
+    if (!v[kid].comments) v[kid].comments = {};
+    for (const d of Object.keys(v[kid].comments)) {
+      if (!Array.isArray(v[kid].comments[d])) v[kid].comments[d] = Object.values(v[kid].comments[d]);
+    }
     if (!Array.isArray(v[kid].items)) v[kid].items = Object.values(v[kid].items);
     // 예전 형식(날짜 없는 배열)은 오늘 날짜의 계획으로 옮김
     if (Array.isArray(v[kid].schedule)) {
@@ -513,10 +537,12 @@ function normalize(v) {
 function render() {
   if (!data) return;
   renderTabs();
-  // 포도알 받기는 아이들 전용
+  // 포도알 받기는 아이들 전용, Comment는 아빠·엄마 전용
   document.getElementById("grapeCard").style.display = KIDS[currentKid].vacStart ? "" : "none";
+  document.getElementById("commentCard").style.display = KIDS[currentKid].vacStart ? "none" : "";
   renderChecklist();
   renderSchedule();
+  renderComments();
   renderCalendar();
   renderCalMemo();
   renderPhonebook();
@@ -542,6 +568,36 @@ function renderPhonebook() {
     });
     ul.appendChild(li);
   });
+}
+
+let commentTabFor = null;
+function renderComments() {
+  const box = document.getElementById("commentList");
+  const arr = (data[currentKid].comments || {})[selectedDate] || [];
+  let html = `<div class="memo-title" style="margin-top:4px">${fmtDate(selectedDate)} 한마디</div>`;
+  if (arr.length) {
+    html += `<ul class="evt-list">` + arr.map((c, i) => {
+      const col = evtColor(c.who || "");
+      return `<li>
+        <span style="background:${col.bg}; color:${col.fg}; border-radius:6px; padding:2px 8px; font-size:12px; font-weight:700; white-space:nowrap">${escapeHtml(c.who || "")}</span>
+        <span style="font-size:14px">${escapeHtml(c.text)}</span>
+        <button class="del" data-i="${i}">✕</button></li>`;
+    }).join("") + `</ul>`;
+  } else {
+    html += `<div class="evt-empty">${KIDS[currentKid].name} 일정에 응원이나 부탁을 남겨보세요</div>`;
+  }
+  box.innerHTML = html;
+  box.querySelectorAll(".del").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const next = arr.filter((_, i) => i !== Number(btn.dataset.i));
+      store.write(`${currentKid}/comments/${selectedDate}`, next.length ? next : null);
+    });
+  });
+  // 탭이 바뀌면 작성자 기본값을 상대방으로
+  if (commentTabFor !== currentKid) {
+    commentTabFor = currentKid;
+    document.getElementById("commentWho").value = currentKid === "appa" ? "엄마" : "아빠";
+  }
 }
 
 function renderTabs() {
@@ -663,9 +719,10 @@ function renderSchedule() {
     li.dataset.end = item && item.end ? item.end : "";
     li.innerHTML = `
       <span class="s-time">
-        <input type="time" class="t-start ${li.dataset.time ? "" : "empty"}" value="${escapeHtml(li.dataset.time)}">
-        <input type="time" class="t-end ${li.dataset.end ? "" : "empty"}" value="${escapeHtml(li.dataset.end)}"
-          ${li.dataset.time ? "" : 'style="display:none"'}>
+        <button class="t-btn ${li.dataset.time ? "" : "empty"}">${li.dataset.time ? escapeHtml(li.dataset.time) : "시작시간"}</button>
+        <button class="t-btn ${li.dataset.end ? "" : "empty"}">${li.dataset.end ? escapeHtml(li.dataset.end) : "종료시간"}</button>
+        <input type="time" class="t-start" value="${escapeHtml(li.dataset.time)}" tabindex="-1">
+        <input type="time" class="t-end" value="${escapeHtml(li.dataset.end)}" tabindex="-1">
       </span>
       <input class="s-text" maxlength="30" value="${item ? escapeHtml(item.text) : ""}">
       ${item ? `<button class="del">✕</button>` : ""}`;
@@ -677,12 +734,10 @@ function renderSchedule() {
     };
     tStart.addEventListener("change", syncTime);
     tEnd.addEventListener("change", syncTime);
-    // 시간 칸을 누르면 시계 선택창 팝업 (시작 시간부터, 그다음 끝 시간)
-    li.querySelector(".s-time").addEventListener("click", (ev) => {
-      const target = (ev.target === tStart || ev.target === tEnd) ? ev.target
-        : !li.dataset.time ? tStart : !li.dataset.end ? tEnd : tStart;
-      try { target.showPicker(); } catch (e) { target.focus(); }
-    });
+    // 시작시간/종료시간 버튼을 누르면 시계 선택창 팝업
+    const [startBtn, endBtn] = li.querySelectorAll(".t-btn");
+    startBtn.addEventListener("click", () => { try { tStart.showPicker(); } catch (e) { tStart.focus(); } });
+    endBtn.addEventListener("click", () => { try { tEnd.showPicker(); } catch (e) { tEnd.focus(); } });
     const txt = li.querySelector(".s-text");
     txt.addEventListener("change", saveScheduleFromRows);
     txt.addEventListener("keydown", e => { if (e.key === "Enter") txt.blur(); });
@@ -861,6 +916,18 @@ document.getElementById("addPhoneBtn").addEventListener("click", () => {
   if (!name || !phone) return;
   nameIn.value = ""; numIn.value = "";
   store.write(`${currentKid}/phonebook`, [...(data[currentKid].phonebook || []), { name, phone }]);
+});
+document.getElementById("commentAdd").addEventListener("click", () => {
+  const input = document.getElementById("commentText");
+  const text = input.value.trim();
+  if (!text) return;
+  const who = document.getElementById("commentWho").value;
+  const arr = (data[currentKid].comments || {})[selectedDate] || [];
+  input.value = "";
+  store.write(`${currentKid}/comments/${selectedDate}`, [...arr, { who, text }]);
+});
+document.getElementById("commentText").addEventListener("keydown", e => {
+  if (e.key === "Enter") document.getElementById("commentAdd").click();
 });
 document.getElementById("editItemsBtn").addEventListener("click", () => { editingItems = !editingItems; render(); });
 document.getElementById("addItemBtn").addEventListener("click", () => {
