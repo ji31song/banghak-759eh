@@ -103,11 +103,6 @@
     background: #2F2D2A; color: #fff; cursor: pointer; white-space: nowrap;
   }
 
-  .add-row.schedule input[type=time] {
-    flex: 1; min-width: 0; font-size: 12px; text-align: center; padding: 10px 6px;
-  }
-  .add-row.schedule .tilde { align-self: center; color: #8B8680; }
-  .add-row.schedule button { font-size: 13px; padding: 0 14px; }
   .sched-hint { font-size: 11px; color: #B2ADA6; text-align: center; margin-top: 10px; }
 
   .sched-wrap { display: flex; gap: 12px; margin-top: 12px; align-items: flex-start; }
@@ -117,7 +112,7 @@
     border-bottom: 1px solid #B8B4AC; min-height: 38px;
   }
   #schedList li:last-child { border-bottom: none; }
-  #schedList li:focus-within, #schedList li.sel { background: #FCF7EA; }
+  #schedList li:focus-within { background: #FCF7EA; }
   #schedList li.head {
     min-height: 30px; background: #F1EEE9; font-size: 11px; color: #8B8680; font-weight: 700;
   }
@@ -133,6 +128,12 @@
     display: flex; flex-direction: column; justify-content: center; text-align: center;
     font-size: 11px; font-weight: 700; color: #4A7DB5; line-height: 1.4;
   }
+  #schedList .s-time input {
+    width: 100%; flex: 1; border: none; background: transparent; font: inherit; color: inherit;
+    text-align: center; padding: 0; outline: none; cursor: pointer;
+  }
+  #schedList .s-time input::-webkit-calendar-picker-indicator { display: none; }
+  #schedList .s-time input.empty { color: transparent; }
   #schedList input.s-text {
     flex: 1; min-width: 0; border: none; background: transparent;
     font-size: 13px; padding: 8px 2px; outline: none; align-self: center;
@@ -254,11 +255,13 @@
   </header>
 
   <div class="tabs">
-    <button class="tab junwoo" data-kid="junwoo">준우</button>
-    <button class="tab yujin" data-kid="yujin">유진</button>
+    <button class="tab" data-kid="junwoo">준우</button>
+    <button class="tab" data-kid="yujin">유진</button>
+    <button class="tab" data-kid="appa">아빠</button>
+    <button class="tab" data-kid="eomma">엄마</button>
   </div>
 
-  <section class="card">
+  <section class="card" id="grapeCard">
     <h2><span class="h2t"><svg class="icon" viewBox="0 0 24 24"><path d="M22 5V2l-5.89 5.89"/><circle cx="16.6" cy="15.89" r="3"/><circle cx="8.11" cy="7.4" r="3"/><circle cx="12.35" cy="11.65" r="3"/><circle cx="13.91" cy="5.85" r="3"/><circle cx="18.15" cy="10.09" r="3"/><circle cx="6.56" cy="13.2" r="3"/><circle cx="10.8" cy="17.44" r="3"/><circle cx="5" cy="19" r="3"/></svg>포도알 받기</span> <button class="edit-btn" id="editItemsBtn">항목 편집</button></h2>
     <div class="date-nav">
       <button id="prevDay">◀</button>
@@ -278,17 +281,17 @@
 
   <section class="card">
     <h2><span class="h2t"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="6" height="6" rx="1"/><path d="m3 17 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg>To-do list</span></h2>
+    <div class="date-nav">
+      <button id="schedPrevDay">◀</button>
+      <span class="cur" id="schedCurDate"></span>
+      <button id="schedNextDay">▶</button>
+      <button class="today-btn" id="schedGoToday">오늘</button>
+    </div>
     <div class="sched-wrap">
       <ul id="schedList"></ul>
       <div id="schedTimeline"></div>
     </div>
-    <div class="add-row schedule">
-      <input type="time" id="schedStart">
-      <span class="tilde">~</span>
-      <input type="time" id="schedEnd">
-      <button id="setTimeBtn">등록</button>
-    </div>
-    <div class="sched-hint">빈 칸에 할 일을 쓰고, 줄을 선택한 뒤 아래에서 시간을 설정하세요</div>
+    <div class="sched-hint">시간 칸을 누르면 시계가 떠요 · 한 번 더 누르면 끝나는 시간도 넣을 수 있어요</div>
   </section>
 
   <section class="card">
@@ -349,7 +352,10 @@ const KIDS = {
             vacStart: "2026-07-21", schoolStart: "2026-08-14" },
   yujin:  { name: "유진", full: "유진", grade: "초5", color: "#3B3835",
             vacStart: "2026-07-23", schoolStart: "2026-08-26" },
+  appa:   { name: "아빠", full: "아빠", color: "#3B3835" },
+  eomma:  { name: "엄마", full: "엄마", color: "#3B3835" },
 };
+const MEMBER_KEYS = Object.keys(KIDS);
 const DEFAULT_DATA = {
   junwoo: {
     items: [
@@ -359,17 +365,7 @@ const DEFAULT_DATA = {
       { id: "j4", text: "운동 30분" },
       { id: "j5", text: "방 정리하기" },
     ],
-    schedule: [
-      { time: "08:00", end: "09:00", text: "기상 · 아침 식사" },
-      { time: "09:00", end: "10:30", text: "수학 공부" },
-      { time: "10:30", end: "12:00", text: "영어 공부" },
-      { time: "12:00", end: "13:00", text: "점심 식사" },
-      { time: "13:00", end: "15:00", text: "자유 시간" },
-      { time: "15:00", end: "16:00", text: "독서" },
-      { time: "16:00", end: "17:00", text: "운동" },
-      { time: "18:00", end: "20:00", text: "저녁 · 가족 시간" },
-      { time: "23:00", end: "23:59", text: "취침" },
-    ],
+    schedule: {},
     checks: {},
   },
   yujin: {
@@ -380,19 +376,11 @@ const DEFAULT_DATA = {
       { id: "y4", text: "줄넘기 / 운동" },
       { id: "y5", text: "방 정리하기" },
     ],
-    schedule: [
-      { time: "08:30", end: "09:30", text: "기상 · 아침 식사" },
-      { time: "09:30", end: "11:00", text: "방학 숙제" },
-      { time: "11:00", end: "12:00", text: "독서" },
-      { time: "12:00", end: "13:00", text: "점심 식사" },
-      { time: "13:00", end: "15:00", text: "자유 시간" },
-      { time: "15:00", end: "15:30", text: "일기 쓰기" },
-      { time: "16:00", end: "17:00", text: "운동 · 놀이" },
-      { time: "18:00", end: "20:00", text: "저녁 · 가족 시간" },
-      { time: "22:00", end: "22:59", text: "취침" },
-    ],
+    schedule: {},
     checks: {},
   },
+  appa:  { items: [], schedule: {}, checks: {} },
+  eomma: { items: [], schedule: {}, checks: {} },
 };
 
 /* ===== 상태 ===== */
@@ -400,7 +388,6 @@ let data = null;
 let currentKid = "junwoo";
 let selectedDate = todayStr();
 let editingItems = false;
-let selectedSchedRow = 0;
 let calCursor = { y: new Date().getFullYear(), m: new Date().getMonth() + 1 };
 
 function todayStr() {
@@ -439,6 +426,13 @@ async function initStore() {
           dbMod.set(rootRef, DEFAULT_DATA);
           return;
         }
+        // 예전 형식(날짜 없는 계획표)이 남아 있으면 오늘 날짜 아래로 한 번 옮겨 저장
+        for (const kid of MEMBER_KEYS) {
+          if (v[kid] && Array.isArray(v[kid].schedule)) {
+            dbMod.set(dbMod.ref(db, `${FAMILY_PATH}/${kid}/schedule`), { [todayStr()]: v[kid].schedule });
+            return; // 변환된 데이터가 다시 수신됨
+          }
+        }
         data = normalize(v);
         render();
       });
@@ -475,15 +469,21 @@ async function initStore() {
 function normalize(v) {
   if (!v.phonebook) v.phonebook = [];
   if (!Array.isArray(v.phonebook)) v.phonebook = Object.values(v.phonebook);
-  for (const kid of ["junwoo", "yujin"]) {
+  for (const kid of MEMBER_KEYS) {
     if (!v[kid]) v[kid] = JSON.parse(JSON.stringify(DEFAULT_DATA[kid]));
     if (!v[kid].items) v[kid].items = [];
-    if (!v[kid].schedule) v[kid].schedule = [];
+    if (!v[kid].schedule) v[kid].schedule = {};
     if (!v[kid].checks) v[kid].checks = {};
     if (!v[kid].events) v[kid].events = {};
     if (!v[kid].grapes) v[kid].grapes = {};
     if (!Array.isArray(v[kid].items)) v[kid].items = Object.values(v[kid].items);
-    if (!Array.isArray(v[kid].schedule)) v[kid].schedule = Object.values(v[kid].schedule);
+    // 예전 형식(날짜 없는 배열)은 오늘 날짜의 계획으로 옮김
+    if (Array.isArray(v[kid].schedule)) {
+      v[kid].schedule = v[kid].schedule.length ? { [todayStr()]: v[kid].schedule } : {};
+    }
+    for (const d of Object.keys(v[kid].schedule)) {
+      if (!Array.isArray(v[kid].schedule[d])) v[kid].schedule[d] = Object.values(v[kid].schedule[d]);
+    }
     for (const d of Object.keys(v[kid].events)) {
       if (!Array.isArray(v[kid].events[d])) v[kid].events[d] = Object.values(v[kid].events[d]);
     }
@@ -495,6 +495,8 @@ function normalize(v) {
 function render() {
   if (!data) return;
   renderTabs();
+  // 포도알 받기는 아이들 전용
+  document.getElementById("grapeCard").style.display = KIDS[currentKid].vacStart ? "" : "none";
   renderChecklist();
   renderSchedule();
   renderCalendar();
@@ -631,23 +633,39 @@ function evtColor(text) {
 
 function renderSchedule() {
   const kid = data[currentKid];
+  const sched = kid.schedule[selectedDate] || [];
+  document.getElementById("schedCurDate").textContent = fmtDate(selectedDate);
   const ul = document.getElementById("schedList");
   ul.innerHTML = `<li class="head"><span class="s-time" style="color:#8B8680">시간</span><span class="s-label">해야 할 일</span></li>`;
-  const rowCount = Math.max(10, kid.schedule.length + 1);
+  const rowCount = Math.max(10, sched.length + 1);
   for (let i = 0; i < rowCount; i++) {
-    const item = kid.schedule[i];
+    const item = sched[i];
     const li = document.createElement("li");
     li.dataset.time = item ? item.time : "";
     li.dataset.end = item && item.end ? item.end : "";
-    const timeLabel = li.dataset.time
-      ? `${escapeHtml(li.dataset.time)}${li.dataset.end ? `~${escapeHtml(li.dataset.end)}` : ""}` : "";
     li.innerHTML = `
-      <span class="s-time">${timeLabel}</span>
+      <span class="s-time">
+        <input type="time" class="t-start ${li.dataset.time ? "" : "empty"}" value="${escapeHtml(li.dataset.time)}">
+        <input type="time" class="t-end ${li.dataset.end ? "" : "empty"}" value="${escapeHtml(li.dataset.end)}"
+          ${li.dataset.time ? "" : 'style="display:none"'}>
+      </span>
       <input class="s-text" maxlength="30" value="${item ? escapeHtml(item.text) : ""}">
       ${item ? `<button class="del">✕</button>` : ""}`;
-    li.addEventListener("click", () => selectSchedRow(i));
+    const tStart = li.querySelector(".t-start"), tEnd = li.querySelector(".t-end");
+    const syncTime = () => {
+      li.dataset.time = tStart.value;
+      li.dataset.end = (tStart.value && tEnd.value > tStart.value) ? tEnd.value : "";
+      saveScheduleFromRows();
+    };
+    tStart.addEventListener("change", syncTime);
+    tEnd.addEventListener("change", syncTime);
+    // 시간 칸을 누르면 시계 선택창 팝업 (시작 시간부터, 그다음 끝 시간)
+    li.querySelector(".s-time").addEventListener("click", (ev) => {
+      const target = (ev.target === tStart || ev.target === tEnd) ? ev.target
+        : !li.dataset.time ? tStart : !li.dataset.end ? tEnd : tStart;
+      try { target.showPicker(); } catch (e) { target.focus(); }
+    });
     const txt = li.querySelector(".s-text");
-    txt.addEventListener("focus", () => selectSchedRow(i));
     txt.addEventListener("change", saveScheduleFromRows);
     txt.addEventListener("keydown", e => { if (e.key === "Enter") txt.blur(); });
     const del = li.querySelector(".del");
@@ -657,30 +675,11 @@ function renderSchedule() {
     });
     ul.appendChild(li);
   }
-  highlightSchedRow();
-  renderTimeline(kid.schedule, document.getElementById("schedTimeline"));
+  renderTimeline(sched, document.getElementById("schedTimeline"));
 }
 
 function schedRows() {
   return document.querySelectorAll("#schedList li:not(.head)");
-}
-
-function selectSchedRow(i) {
-  selectedSchedRow = i;
-  highlightSchedRow();
-  // 선택한 줄에 이미 시간이 있으면 아래 입력칸에 보여줌
-  const li = schedRows()[i];
-  if (li && li.dataset.time) {
-    document.getElementById("schedStart").value = li.dataset.time;
-    document.getElementById("schedEnd").value = li.dataset.end || "";
-  }
-}
-
-// 선택 표시만 갱신 (아래 시간 입력칸은 건드리지 않음)
-function highlightSchedRow() {
-  schedRows().forEach((li, i) => {
-    li.classList.toggle("sel", i === selectedSchedRow);
-  });
 }
 
 // 왼쪽 표의 모든 줄을 읽어 계획표로 저장
@@ -693,7 +692,7 @@ function saveScheduleFromRows() {
     if (!t && !x) continue;
     sched.push({ time: t, end: (e && e > t) ? e : "", text: x });
   }
-  store.write(`${currentKid}/schedule`, sched);
+  store.write(`${currentKid}/schedule/${selectedDate}`, sched.length ? sched : null);
 }
 
 function renderTimeline(schedule, tl) {
@@ -736,9 +735,13 @@ function renderCalendar() {
   document.getElementById("curMonth").textContent = `${year}년 ${month}월`;
   const legend = document.getElementById("calLegend");
   const kidInfo = KIDS[currentKid];
-  const vs = parseDate(kidInfo.vacStart), ve = parseDate(shiftDate(kidInfo.schoolStart, -1));
-  legend.innerHTML = `<span><i class="bar" style="height:10px"></i>${kidInfo.name} 방학 (${vs.getMonth()+1}/${vs.getDate()} ~ ${ve.getMonth()+1}/${ve.getDate()})</span>`;
-  legend.style.display = (year === 2026 && (month === 7 || month === 8)) ? "flex" : "none";
+  if (kidInfo.vacStart && year === 2026 && (month === 7 || month === 8)) {
+    const vs = parseDate(kidInfo.vacStart), ve = parseDate(shiftDate(kidInfo.schoolStart, -1));
+    legend.innerHTML = `<span><i class="bar" style="height:10px"></i>${kidInfo.name} 방학 (${vs.getMonth()+1}/${vs.getDate()} ~ ${ve.getMonth()+1}/${ve.getDate()})</span>`;
+    legend.style.display = "flex";
+  } else {
+    legend.style.display = "none";
+  }
 
   const first = new Date(year, month-1, 1);
   const daysInMonth = new Date(year, month, 0).getDate();
@@ -752,7 +755,7 @@ function renderCalendar() {
     const d = new Date(year, month-1, c - startOffset + 1);
     const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
     const inMonth = d.getMonth() === month - 1;
-    const bars = (ds >= kidInfo.vacStart && ds < kidInfo.schoolStart) ? `<div class="bar"></div>` : "";
+    const bars = (kidInfo.vacStart && ds >= kidInfo.vacStart && ds < kidInfo.schoolStart) ? `<div class="bar"></div>` : "";
     const evts = eventsOf(currentKid, ds);
     let chips = evts.slice(0, 2).map(e => {
       const c = evtColor(e.text);
@@ -828,21 +831,11 @@ document.querySelectorAll(".tab").forEach(t => {
 document.getElementById("prevDay").addEventListener("click", () => { selectedDate = shiftDate(selectedDate, -1); render(); });
 document.getElementById("nextDay").addEventListener("click", () => { selectedDate = shiftDate(selectedDate, 1); render(); });
 document.getElementById("goToday").addEventListener("click", () => { selectedDate = todayStr(); render(); });
+document.getElementById("schedPrevDay").addEventListener("click", () => { selectedDate = shiftDate(selectedDate, -1); render(); });
+document.getElementById("schedNextDay").addEventListener("click", () => { selectedDate = shiftDate(selectedDate, 1); render(); });
+document.getElementById("schedGoToday").addEventListener("click", () => { selectedDate = todayStr(); render(); });
 document.getElementById("prevMonth").addEventListener("click", () => shiftMonth(-1));
 document.getElementById("nextMonth").addEventListener("click", () => shiftMonth(1));
-document.getElementById("setTimeBtn").addEventListener("click", () => {
-  const li = schedRows()[selectedSchedRow];
-  if (!li) return;
-  const start = document.getElementById("schedStart").value;
-  const end = document.getElementById("schedEnd").value;
-  if (start) { // 시간을 비워두고 등록하면 기존 시간 유지
-    li.dataset.time = start;
-    li.dataset.end = (end && end > start) ? end : "";
-    document.getElementById("schedStart").value = "";
-    document.getElementById("schedEnd").value = "";
-  }
-  saveScheduleFromRows(); // 할 일 텍스트와 시간을 모두 반영
-});
 document.getElementById("addPhoneBtn").addEventListener("click", () => {
   const nameIn = document.getElementById("newPhoneName");
   const numIn = document.getElementById("newPhoneNum");
