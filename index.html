@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#B08D57">
+<meta name="theme-color" content="#6B6661">
 <meta name="robots" content="noindex, nofollow">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -27,32 +27,27 @@
     display: inline-block; margin-top: 6px; font-size: 11px;
     background: #ECEAE6; color: #6B6661; padding: 3px 10px; border-radius: 999px;
   }
-  #syncStatus.on { background: #E2EEE6; color: #3D7A55; }
-
-  .dday-row { display: flex; gap: 10px; margin-top: 14px; }
-  .dday-card {
-    flex: 1; border-radius: 16px; padding: 14px 12px; color: #fff; text-align: center;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-  }
-  .dday-card.junwoo { background: #51749B; }
-  .dday-card.yujin  { background: #B07A88; }
-  .dday-card .kid-name { font-size: 14px; opacity: 0.95; }
-  .dday-card .dday { font-size: 26px; font-weight: 800; margin: 4px 0; }
-  .dday-card .sub { font-size: 11px; opacity: 0.9; line-height: 1.5; }
+  #syncStatus.on { background: #E4E1DC; color: #4A4741; }
 
   .tabs { display: flex; gap: 8px; margin-top: 20px; }
   .tab {
     flex: 1; padding: 12px 0; border: none; border-radius: 14px; font-size: 16px; font-weight: 700;
     background: #ECEAE6; color: #8B8680; cursor: pointer;
   }
-  .tab.active.junwoo { background: #51749B; color: #fff; }
-  .tab.active.yujin  { background: #B07A88; color: #fff; }
+  .tab.active { background: #3B3835; color: #fff; }
 
   section.card {
     background: #fff; border-radius: 18px; padding: 16px; margin-top: 14px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   }
   .card h2 { font-size: 16px; display: flex; align-items: center; justify-content: space-between; }
+  .icon {
+    width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2;
+    stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0;
+  }
+  .h2t { display: inline-flex; align-items: center; gap: 7px; }
+  header h1 .icon { width: 20px; height: 20px; vertical-align: -3px; }
+  #syncStatus::before { content: "●"; margin-right: 5px; font-size: 9px; vertical-align: 1px; }
   .card h2 .edit-btn {
     font-size: 12px; font-weight: 600; border: 1px solid #D3CFC8; background: #fff;
     color: #8B8680; border-radius: 999px; padding: 4px 12px; cursor: pointer;
@@ -61,8 +56,8 @@
 
   .date-nav { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 12px 0 4px; }
   .date-nav button {
-    border: none; background: #ECEAE6; border-radius: 10px; width: 34px; height: 34px;
-    font-size: 15px; cursor: pointer; color: #6B6661;
+    border: none; background: #ECEAE6; border-radius: 8px; width: 26px; height: 26px;
+    font-size: 11px; cursor: pointer; color: #6B6661;
   }
   .date-nav .cur { font-size: 15px; font-weight: 700; min-width: 140px; text-align: center; }
   .date-nav .today-btn { width: auto; padding: 0 10px; font-size: 12px; }
@@ -78,11 +73,26 @@
   }
   ul.checklist li:last-child { border-bottom: none; }
   ul.checklist input[type=checkbox] { width: 22px; height: 22px; accent-color: currentColor; flex-shrink: 0; }
-  ul.checklist li.done span.txt { text-decoration: line-through; color: #B2ADA6; }
+  ul.checklist .txt {
+    flex: 1; min-width: 0; border: none; background: transparent;
+    font-size: 15px; outline: none; padding: 2px 0; font-family: inherit; color: inherit;
+  }
+  ul.checklist li.done .txt { text-decoration: line-through; color: #B2ADA6; }
   ul.checklist .del {
     margin-left: auto; border: none; background: #FDE8E8; color: #D64545;
     border-radius: 8px; width: 26px; height: 26px; font-size: 14px; cursor: pointer;
   }
+  #grapeArea { margin-top: 14px; border-top: 1px dashed #EAE7E2; padding-top: 12px; }
+  .grape-btn {
+    display: block; width: 100%; border: none; border-radius: 12px; padding: 12px;
+    background: #7C5296; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer;
+  }
+  .grape-done { text-align: center; font-size: 14px; color: #7C5296; font-weight: 700; padding: 4px 0; }
+  .grape-count { font-size: 12px; color: #8B8680; margin-bottom: 6px; }
+  .grape-board { display: grid; grid-template-columns: repeat(15, 1fr); gap: 5px; }
+  .grape-board .grape { width: 100%; aspect-ratio: 1; border-radius: 50%; background: #EFECE7; border: 1px solid #E2DED7; }
+  .grape-board .grape.on { background: #8E62AC; border-color: #7C5296; }
+
   .add-row { display: flex; gap: 8px; margin-top: 12px; }
   .add-row input {
     flex: 1; border: 1.5px solid #DBD7D1; border-radius: 10px; padding: 10px 12px; font-size: 14px;
@@ -93,46 +103,109 @@
     background: #2F2D2A; color: #fff; cursor: pointer; white-space: nowrap;
   }
 
-  table.timetable { width: 100%; border-collapse: collapse; margin-top: 10px; }
-  table.timetable td { padding: 9px 6px; border-bottom: 1px dashed #EAE7E2; font-size: 14px; }
-  table.timetable tr:last-child td { border-bottom: none; }
-  table.timetable td.time { width: 70px; font-weight: 700; white-space: nowrap; }
-  table.timetable .del {
-    border: none; background: #FDE8E8; color: #D64545; border-radius: 8px;
-    width: 26px; height: 26px; font-size: 14px; cursor: pointer; float: right;
+  .add-row.schedule input[type=time] {
+    flex: 1; min-width: 0; font-size: 12px; text-align: center; padding: 10px 6px;
   }
-  .add-row.schedule input.time-in { flex: 0 0 80px; }
+  .add-row.schedule .tilde { align-self: center; color: #8B8680; }
+  .add-row.schedule button { font-size: 13px; padding: 0 14px; }
+  .sched-hint { font-size: 11px; color: #B2ADA6; text-align: center; margin-top: 10px; }
+
+  .sched-wrap { display: flex; gap: 12px; margin-top: 12px; align-items: flex-start; }
+  #schedList { list-style: none; flex: 3; min-width: 0; border: 1px solid #B8B4AC; border-radius: 6px; overflow: hidden; }
+  #schedList li {
+    display: flex; align-items: stretch; gap: 8px; padding: 0 6px 0 0;
+    border-bottom: 1px solid #B8B4AC; min-height: 38px;
+  }
+  #schedList li:last-child { border-bottom: none; }
+  #schedList li:focus-within, #schedList li.sel { background: #FCF7EA; }
+  #schedList li.head {
+    min-height: 30px; background: #F1EEE9; font-size: 11px; color: #8B8680; font-weight: 700;
+  }
+  #schedList li.head .s-label { flex: 1; align-self: center; padding: 0 2px; text-align: center; }
+  #schedList li.head .s-time { justify-content: center; text-align: center; }
+  .vt-head {
+    height: 30px; background: #F1EEE9; border: 1px solid #B8B4AC; border-bottom: none;
+    border-radius: 6px 6px 0 0; font-size: 11px; color: #8B8680; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #schedList .s-time {
+    flex: 0 0 90px; border-right: 1px solid #B8B4AC; padding: 3px 8px;
+    display: flex; flex-direction: column; justify-content: center; text-align: center;
+    font-size: 11px; font-weight: 700; color: #4A7DB5; line-height: 1.4;
+  }
+  #schedList input.s-text {
+    flex: 1; min-width: 0; border: none; background: transparent;
+    font-size: 13px; padding: 8px 2px; outline: none; align-self: center;
+  }
+  #schedList .del {
+    border: none; background: #FDE8E8; color: #D64545; border-radius: 6px;
+    width: 20px; height: 20px; font-size: 11px; cursor: pointer; flex-shrink: 0; align-self: center;
+  }
+  #schedTimeline { flex: 0 0 90px; }
+  .vt { position: relative; border: 1px solid #B8B4AC; border-radius: 6px; overflow: hidden; }
+  .vt-line { position: absolute; left: 0; right: 0; border-top: 1px solid #B8B4AC; }
+  .vt-divider { position: absolute; top: 0; bottom: 0; left: 22px; border-left: 1px solid #B8B4AC; }
+  .vt-label {
+    position: absolute; left: 0; width: 22px; transform: translateY(-50%);
+    font-size: 9px; color: #6B6661; text-align: center;
+  }
+  .vt-bar {
+    position: absolute; left: 25px; right: 3px; border-radius: 3px;
+    font-size: 8px; font-weight: 700; padding: 1px 3px; overflow: hidden;
+    white-space: nowrap; text-overflow: ellipsis; line-height: 1.2;
+  }
 
   .cal-legend { display: flex; gap: 14px; font-size: 12px; color: #6B6661; margin-top: 8px; }
-  .cal-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; }
+  .cal-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; background: #3B3835; }
   .cal-month { margin-top: 14px; }
   .cal-month h3 { font-size: 14px; text-align: center; margin-bottom: 8px; }
   .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
   .cal-grid .dow { text-align: center; font-size: 11px; color: #B2ADA6; padding: 3px 0; }
   .cal-grid .dow.sun { color: #C96B6B; }
+  .cal-grid { gap: 2px; }
   .cal-cell {
-    position: relative; text-align: center; padding: 6px 0 10px; border-radius: 10px;
-    font-size: 13px; cursor: pointer; min-height: 40px;
+    position: relative; text-align: center; padding: 3px 1px 8px; border-radius: 8px;
+    font-size: 12px; cursor: pointer; min-height: 68px;
+    border: 1px solid #F0EEEA; background: #FDFCFB;
   }
-  .cal-cell.other { visibility: hidden; }
+  .cal-cell.dim { background: transparent; border-color: transparent; }
+  .cal-cell.dim .num, .cal-cell.dim.sun .num { color: #CFCAC2; }
+  .cal-cell.dim .cal-evt, .cal-cell.dim .cal-bars { opacity: 0.45; }
   .cal-cell.sun .num { color: #C96B6B; }
+  .cal-cell .num { display: inline-block; margin-bottom: 2px; }
   .cal-cell.today .num {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 24px; height: 24px; border-radius: 50%; background: #B08D57; color: #fff; font-weight: 800;
+    width: 20px; height: 20px; border-radius: 50%; background: #6B6661; color: #fff; font-weight: 800;
   }
-  .cal-cell.selected { background: #EFEBE4; box-shadow: inset 0 0 0 2px #B08D57; }
-  .cal-bars { position: absolute; left: 15%; right: 15%; bottom: 3px; display: flex; flex-direction: column; gap: 2px; }
-  .cal-bars .bar { height: 3px; border-radius: 2px; }
-  .bar.junwoo { background: #51749B; }
-  .bar.yujin { background: #B07A88; }
+  .cal-cell.selected { background: #EFEBE4; box-shadow: inset 0 0 0 2px #6B6661; }
+  .cal-evt {
+    font-size: 8.5px; border-radius: 4px;
+    padding: 1px 3px; margin: 1px 2px 0; text-align: left;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .cal-more { font-size: 9px; color: #8B8680; text-align: left; margin-left: 3px; }
+  .cal-bars { position: absolute; left: 8%; right: 8%; bottom: 2px; display: flex; flex-direction: column; gap: 2px; }
+  .cal-bars .bar { height: 3px; border-radius: 2px; background: #3B3835; }
+  .memo-title { font-size: 13px; font-weight: 700; margin-top: 16px; }
 
-  .view-toggle { display: flex; gap: 4px; }
-  .view-toggle button {
-    border: 1px solid #D3CFC8; background: #fff; color: #8B8680; font-size: 12px;
-    font-weight: 600; padding: 4px 12px; border-radius: 999px; cursor: pointer;
+  #phoneList { list-style: none; margin-top: 4px; }
+  #phoneList li {
+    display: flex; align-items: center; gap: 10px; padding: 10px 4px;
+    border-bottom: 1px dashed #EAE7E2;
   }
-  .view-toggle button.on { background: #2F2D2A; color: #fff; border-color: #2F2D2A; }
-  .evt-day-title { font-size: 13px; color: #8B8680; margin-top: 10px; }
+  #phoneList li:last-child { border-bottom: none; }
+  #phoneList .p-name { flex: 1; min-width: 0; font-size: 14px; font-weight: 600; }
+  #phoneList .p-num { font-size: 12px; color: #8B8680; white-space: nowrap; }
+  #phoneList .call-btn {
+    text-decoration: none; background: #3D7A55; color: #fff; border-radius: 10px;
+    padding: 8px 13px; font-size: 13px; font-weight: 700; white-space: nowrap;
+  }
+  #phoneList .del {
+    border: none; background: #FDE8E8; color: #D64545; border-radius: 6px;
+    width: 20px; height: 20px; font-size: 11px; cursor: pointer; flex-shrink: 0;
+  }
+  #phoneList .empty { color: #BDB8B1; font-size: 13px; text-align: center; padding: 10px 0; }
+
   .evt-empty { text-align: center; color: #BDB8B1; font-size: 13px; padding: 14px 0 4px; }
   ul.evt-list { list-style: none; margin-top: 6px; }
   ul.evt-list li {
@@ -145,21 +218,6 @@
     margin-left: auto; border: none; background: #FDE8E8; color: #D64545;
     border-radius: 8px; width: 26px; height: 26px; font-size: 14px; cursor: pointer;
   }
-  ul.week-list { list-style: none; margin-top: 8px; }
-  ul.week-list li {
-    display: flex; gap: 10px; padding: 9px 8px; border-bottom: 1px dashed #EAE7E2;
-    font-size: 14px; cursor: pointer; align-items: flex-start;
-  }
-  ul.week-list li:last-child { border-bottom: none; }
-  ul.week-list li.todayrow { background: #F1EDE6; border-radius: 10px; }
-  .week-day { min-width: 64px; font-weight: 700; }
-  .week-evts { color: #6B6661; display: flex; flex-direction: column; gap: 3px; }
-  .week-empty { color: #D3CFC8; }
-  .cal-cell .evt-dot {
-    position: absolute; top: 2px; right: 6px; width: 5px; height: 5px;
-    border-radius: 50%; background: #B08D57;
-  }
-
   footer { text-align: center; font-size: 11px; color: #BDB8B1; margin-top: 24px; }
 
   #lockScreen {
@@ -174,7 +232,7 @@
     border: 2px solid #DBD7D1; border-radius: 14px; padding: 12px; background: #fff;
   }
   #pinBtn {
-    border: none; background: #B08D57; color: #fff; font-size: 16px; font-weight: 700;
+    border: none; background: #6B6661; color: #fff; font-size: 16px; font-weight: 700;
     border-radius: 14px; padding: 12px 40px; cursor: pointer;
   }
   #pinError { color: #D64545; font-size: 13px; min-height: 18px; }
@@ -182,7 +240,7 @@
 </head>
 <body>
 <div id="lockScreen">
-  <div class="emoji">🌻</div>
+  <div class="emoji"><svg class="icon" style="width:52px;height:52px;stroke-width:1.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
   <p>가족 비밀번호를 입력해 주세요</p>
   <input id="pinInput" type="password" inputmode="numeric" maxlength="6" autocomplete="off">
   <div id="pinError"></div>
@@ -190,20 +248,18 @@
 </div>
 <div class="wrap">
   <header>
-    <h1>🌻 권씨네 일정관리</h1>
+    <h1><svg class="icon" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> 권씨네 일정관리</h1>
     <div class="today" id="todayLabel"></div>
-    <span id="syncStatus">⚪ 이 기기에만 저장 중</span>
+    <span id="syncStatus">이 기기에만 저장 중</span>
   </header>
 
-  <div class="dday-row" id="ddayRow"></div>
-
   <div class="tabs">
-    <button class="tab junwoo" data-kid="junwoo">준우 (중1)</button>
-    <button class="tab yujin" data-kid="yujin">유진 (초5)</button>
+    <button class="tab junwoo" data-kid="junwoo">준우</button>
+    <button class="tab yujin" data-kid="yujin">유진</button>
   </div>
 
   <section class="card">
-    <h2>✅ 체크리스트 <button class="edit-btn" id="editItemsBtn">항목 편집</button></h2>
+    <h2><span class="h2t"><svg class="icon" viewBox="0 0 24 24"><path d="M22 5V2l-5.89 5.89"/><circle cx="16.6" cy="15.89" r="3"/><circle cx="8.11" cy="7.4" r="3"/><circle cx="12.35" cy="11.65" r="3"/><circle cx="13.91" cy="5.85" r="3"/><circle cx="18.15" cy="10.09" r="3"/><circle cx="6.56" cy="13.2" r="3"/><circle cx="10.8" cy="17.44" r="3"/><circle cx="5" cy="19" r="3"/></svg>포도알 받기</span> <button class="edit-btn" id="editItemsBtn">항목 편집</button></h2>
     <div class="date-nav">
       <button id="prevDay">◀</button>
       <span class="cur" id="curDate"></span>
@@ -213,6 +269,7 @@
     <div class="progress-outer"><div class="progress-inner" id="progressBar"></div></div>
     <div class="progress-label" id="progressLabel"></div>
     <ul class="checklist" id="checklist"></ul>
+    <div id="grapeArea"></div>
     <div class="add-row" id="itemAddRow" style="display:none">
       <input id="newItemText" placeholder="새 할 일 입력" maxlength="30">
       <button id="addItemBtn">추가</button>
@@ -220,46 +277,43 @@
   </section>
 
   <section class="card">
-    <h2>📆 일정
-      <span class="view-toggle">
-        <button id="viewDay" class="on">일간</button>
-        <button id="viewWeek">주간</button>
-      </span>
-    </h2>
-    <div id="eventsArea"></div>
-    <div class="add-row schedule" id="evtAddRow">
-      <input class="time-in" id="newEvtTime" placeholder="시간" maxlength="11">
-      <input id="newEvtText" placeholder="일정 내용 (예: 수학학원)" maxlength="40">
-      <button id="addEvtBtn">추가</button>
+    <h2><span class="h2t"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="6" height="6" rx="1"/><path d="m3 17 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg>To-do list</span></h2>
+    <div class="sched-wrap">
+      <ul id="schedList"></ul>
+      <div id="schedTimeline"></div>
     </div>
+    <div class="add-row schedule">
+      <input type="time" id="schedStart">
+      <span class="tilde">~</span>
+      <input type="time" id="schedEnd">
+      <button id="setTimeBtn">등록</button>
+    </div>
+    <div class="sched-hint">빈 칸에 할 일을 쓰고, 줄을 선택한 뒤 아래에서 시간을 설정하세요</div>
   </section>
 
   <section class="card">
-    <h2>⏰ 생활계획표 <button class="edit-btn" id="editSchedBtn">편집</button></h2>
-    <table class="timetable"><tbody id="schedBody"></tbody></table>
-    <div class="add-row schedule" id="schedAddRow" style="display:none">
-      <input class="time-in" id="newSchedTime" placeholder="09:00" maxlength="11">
-      <input id="newSchedText" placeholder="활동 내용" maxlength="30">
-      <button id="addSchedBtn">추가</button>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>📅 달력</h2>
-    <div class="cal-legend" id="calLegend">
-      <span><i class="bar junwoo" style="height:10px"></i>준우 방학 (7/21 ~ 8/13)</span>
-      <span><i class="bar yujin" style="height:10px"></i>유진 방학 (7/23 ~ 8/25)</span>
-    </div>
+    <h2><span class="h2t"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>달력</span></h2>
+    <div class="cal-legend" id="calLegend"></div>
     <div class="date-nav">
       <button id="prevMonth">◀</button>
       <span class="cur" id="curMonth"></span>
       <button id="nextMonth">▶</button>
-      <button class="today-btn" id="goThisMonth">이번 달</button>
     </div>
     <div id="calendar"></div>
+    <div id="calMemo"></div>
   </section>
 
-  <footer>날짜를 누르면 그날의 체크리스트를 볼 수 있어요</footer>
+  <section class="card">
+    <h2><span class="h2t"><svg class="icon" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>전화번호부</span></h2>
+    <ul id="phoneList"></ul>
+    <div class="add-row">
+      <input id="newPhoneName" placeholder="이름 (예: 수학학원)" maxlength="20">
+      <input id="newPhoneNum" placeholder="010-1234-5678" inputmode="tel" maxlength="20">
+      <button id="addPhoneBtn">추가</button>
+    </div>
+  </section>
+
+  <footer>달력에서 날짜를 누르면 바로 메모를 쓸 수 있어요</footer>
 </div>
 
 <script src="firebase-config.js"></script>
@@ -289,9 +343,9 @@ if (localStorage.getItem("banghak-unlock") === "1") {
 
 /* ===== 기본 정보 ===== */
 const KIDS = {
-  junwoo: { name: "준우", full: "준우", grade: "중1", color: "#51749B",
+  junwoo: { name: "준우", full: "준우", grade: "중1", color: "#3B3835",
             vacStart: "2026-07-21", schoolStart: "2026-08-14" },
-  yujin:  { name: "유진", full: "유진", grade: "초5", color: "#B07A88",
+  yujin:  { name: "유진", full: "유진", grade: "초5", color: "#3B3835",
             vacStart: "2026-07-23", schoolStart: "2026-08-26" },
 };
 const DEFAULT_DATA = {
@@ -304,15 +358,15 @@ const DEFAULT_DATA = {
       { id: "j5", text: "방 정리하기" },
     ],
     schedule: [
-      { time: "08:00", text: "기상 · 아침 식사" },
-      { time: "09:00", text: "수학 공부" },
-      { time: "10:30", text: "영어 공부" },
-      { time: "12:00", text: "점심 식사" },
-      { time: "13:00", text: "자유 시간" },
-      { time: "15:00", text: "독서" },
-      { time: "16:00", text: "운동" },
-      { time: "18:00", text: "저녁 · 가족 시간" },
-      { time: "23:00", text: "취침" },
+      { time: "08:00", end: "09:00", text: "기상 · 아침 식사" },
+      { time: "09:00", end: "10:30", text: "수학 공부" },
+      { time: "10:30", end: "12:00", text: "영어 공부" },
+      { time: "12:00", end: "13:00", text: "점심 식사" },
+      { time: "13:00", end: "15:00", text: "자유 시간" },
+      { time: "15:00", end: "16:00", text: "독서" },
+      { time: "16:00", end: "17:00", text: "운동" },
+      { time: "18:00", end: "20:00", text: "저녁 · 가족 시간" },
+      { time: "23:00", end: "23:59", text: "취침" },
     ],
     checks: {},
   },
@@ -325,15 +379,15 @@ const DEFAULT_DATA = {
       { id: "y5", text: "방 정리하기" },
     ],
     schedule: [
-      { time: "08:30", text: "기상 · 아침 식사" },
-      { time: "09:30", text: "방학 숙제" },
-      { time: "11:00", text: "독서" },
-      { time: "12:00", text: "점심 식사" },
-      { time: "13:00", text: "자유 시간" },
-      { time: "15:00", text: "일기 쓰기" },
-      { time: "16:00", text: "운동 · 놀이" },
-      { time: "18:00", text: "저녁 · 가족 시간" },
-      { time: "22:00", text: "취침" },
+      { time: "08:30", end: "09:30", text: "기상 · 아침 식사" },
+      { time: "09:30", end: "11:00", text: "방학 숙제" },
+      { time: "11:00", end: "12:00", text: "독서" },
+      { time: "12:00", end: "13:00", text: "점심 식사" },
+      { time: "13:00", end: "15:00", text: "자유 시간" },
+      { time: "15:00", end: "15:30", text: "일기 쓰기" },
+      { time: "16:00", end: "17:00", text: "운동 · 놀이" },
+      { time: "18:00", end: "20:00", text: "저녁 · 가족 시간" },
+      { time: "22:00", end: "22:59", text: "취침" },
     ],
     checks: {},
   },
@@ -344,8 +398,7 @@ let data = null;
 let currentKid = "junwoo";
 let selectedDate = todayStr();
 let editingItems = false;
-let editingSched = false;
-let eventsView = "day";
+let selectedSchedRow = 0;
 let calCursor = { y: new Date().getFullYear(), m: new Date().getMonth() + 1 };
 
 function todayStr() {
@@ -362,7 +415,6 @@ function shiftDate(s, n) {
   const d = parseDate(s); d.setDate(d.getDate()+n);
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 }
-function daysBetween(a, b) { return Math.round((parseDate(b) - parseDate(a)) / 86400000); }
 
 /* ===== 저장소 (Firebase 또는 localStorage) ===== */
 const FAMILY_PATH = "families/kwon-2026-summer";
@@ -389,7 +441,7 @@ async function initStore() {
         render();
       });
       const st = document.getElementById("syncStatus");
-      st.textContent = "🟢 실시간 공유 중";
+      st.textContent = "실시간 공유 중";
       st.classList.add("on");
       return;
     } catch (e) {
@@ -419,12 +471,15 @@ async function initStore() {
 
 // Firebase는 빈 객체/배열을 지우기 때문에 형태 보정
 function normalize(v) {
+  if (!v.phonebook) v.phonebook = [];
+  if (!Array.isArray(v.phonebook)) v.phonebook = Object.values(v.phonebook);
   for (const kid of ["junwoo", "yujin"]) {
     if (!v[kid]) v[kid] = JSON.parse(JSON.stringify(DEFAULT_DATA[kid]));
     if (!v[kid].items) v[kid].items = [];
     if (!v[kid].schedule) v[kid].schedule = [];
     if (!v[kid].checks) v[kid].checks = {};
     if (!v[kid].events) v[kid].events = {};
+    if (!v[kid].grapes) v[kid].grapes = {};
     if (!Array.isArray(v[kid].items)) v[kid].items = Object.values(v[kid].items);
     if (!Array.isArray(v[kid].schedule)) v[kid].schedule = Object.values(v[kid].schedule);
     for (const d of Object.keys(v[kid].events)) {
@@ -437,38 +492,34 @@ function normalize(v) {
 /* ===== 렌더링 ===== */
 function render() {
   if (!data) return;
-  renderDday();
   renderTabs();
   renderChecklist();
-  renderEvents();
   renderSchedule();
   renderCalendar();
+  renderCalMemo();
+  renderPhonebook();
 }
 
-function renderDday() {
-  const today = todayStr();
-  const row = document.getElementById("ddayRow");
-  row.innerHTML = "";
-  for (const [key, kid] of Object.entries(KIDS)) {
-    let main, sub;
-    if (today < kid.vacStart) {
-      main = `방학 D-${daysBetween(today, kid.vacStart)}`;
-      sub = `${fmtDate(kid.vacStart)} 방학 시작`;
-    } else if (today < kid.schoolStart) {
-      const day = daysBetween(kid.vacStart, today) + 1;
-      main = `개학 D-${daysBetween(today, kid.schoolStart)}`;
-      sub = `방학 ${day}일째 · ${fmtDate(kid.schoolStart)} 개학`;
-    } else {
-      main = "개학 🎒";
-      sub = "새 학기 화이팅!";
-    }
-    row.insertAdjacentHTML("beforeend", `
-      <div class="dday-card ${key}">
-        <div class="kid-name">${kid.full} (${kid.grade})</div>
-        <div class="dday">${main}</div>
-        <div class="sub">${sub}</div>
-      </div>`);
+function renderPhonebook() {
+  const ul = document.getElementById("phoneList");
+  const book = data.phonebook || [];
+  ul.innerHTML = "";
+  if (!book.length) {
+    ul.innerHTML = `<li class="empty">아래에서 자주 거는 번호를 등록해 두세요</li>`;
   }
+  book.forEach((p, idx) => {
+    const telHref = "tel:" + String(p.phone).replace(/[^0-9+]/g, "");
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <span class="p-name">${escapeHtml(p.name)}</span>
+      <span class="p-num">${escapeHtml(p.phone)}</span>
+      <a class="call-btn" href="${telHref}"><svg class="icon" style="width:12px;height:12px;vertical-align:-1px" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> 전화</a>
+      <button class="del">✕</button>`;
+    li.querySelector(".del").addEventListener("click", () => {
+      store.write("phonebook", book.filter((_, i) => i !== idx));
+    });
+    ul.appendChild(li);
+  });
 }
 
 function renderTabs() {
@@ -493,10 +544,19 @@ function renderChecklist() {
     li.className = checked ? "done" : "";
     li.innerHTML = `
       <input type="checkbox" ${checked ? "checked" : ""}>
-      <span class="txt">${escapeHtml(item.text)}</span>
+      <input class="txt" maxlength="30" value="${escapeHtml(item.text)}">
       ${editingItems ? `<button class="del">✕</button>` : ""}`;
-    li.querySelector("input").addEventListener("change", (e) => {
+    li.querySelector("input[type=checkbox]").addEventListener("change", (e) => {
       store.write(`${currentKid}/checks/${selectedDate}/${item.id}`, e.target.checked ? true : null);
+    });
+    const txt = li.querySelector(".txt");
+    txt.addEventListener("keydown", e => { if (e.key === "Enter") txt.blur(); });
+    txt.addEventListener("change", () => {
+      const newText = txt.value.trim();
+      const items = newText
+        ? kid.items.map((it, i) => i === idx ? { ...it, text: newText } : it)
+        : kid.items.filter((_, i) => i !== idx); // 비우면 삭제
+      store.write(`${currentKid}/items`, items);
     });
     if (editingItems) {
       li.querySelector(".del").addEventListener("click", () => {
@@ -513,12 +573,38 @@ function renderChecklist() {
   bar.style.width = pct + "%";
   bar.style.background = KIDS[currentKid].color;
   document.getElementById("progressLabel").textContent =
-    total ? `${done} / ${total} 완료 (${pct}%)${pct === 100 ? " 🎉" : ""}` : "항목을 추가해 주세요";
+    total ? `${done} / ${total} 완료 (${pct}%)` : "항목을 추가해 주세요";
 
   document.getElementById("itemAddRow").style.display = editingItems ? "flex" : "none";
   const btn = document.getElementById("editItemsBtn");
   btn.textContent = editingItems ? "완료" : "항목 편집";
   btn.classList.toggle("editing", editingItems);
+  renderGrapes(done, total);
+}
+
+function renderGrapes(done, total) {
+  const area = document.getElementById("grapeArea");
+  const grapes = data[currentKid].grapes || {};
+  const count = Object.keys(grapes).length;
+  let html = "";
+
+  if (total > 0 && done === total) {
+    if (grapes[selectedDate]) {
+      html += `<div class="grape-done">${fmtDate(selectedDate)} 포도알 획득!</div>`;
+    } else {
+      html += `<button class="grape-btn" id="giveGrapeBtn">다 했어요! 엄마, 포도알 주세요</button>`;
+    }
+  }
+  html += `<div class="grape-count" style="margin-top:10px">모은 포도알 <b>${count}</b>개 ${count >= 30 ? "· 포도송이 완성!" : "(30개 모으면 포도송이 완성)"}</div>`;
+  html += `<div class="grape-board">`;
+  for (let i = 0; i < 30; i++) html += `<div class="grape ${i < count ? "on" : ""}"></div>`;
+  html += `</div>`;
+  area.innerHTML = html;
+
+  const giveBtn = document.getElementById("giveGrapeBtn");
+  if (giveBtn) giveBtn.addEventListener("click", () => {
+    store.write(`${currentKid}/grapes/${selectedDate}`, true);
+  });
 }
 
 function eventsOf(kidKey, dateStr) {
@@ -526,88 +612,118 @@ function eventsOf(kidKey, dateStr) {
   return ev[dateStr] || [];
 }
 
-function renderEvents() {
-  const color = KIDS[currentKid].color;
-  const area = document.getElementById("eventsArea");
-  document.getElementById("viewDay").classList.toggle("on", eventsView === "day");
-  document.getElementById("viewWeek").classList.toggle("on", eventsView === "week");
-  document.getElementById("evtAddRow").style.display = eventsView === "day" ? "flex" : "none";
-  area.innerHTML = "";
-
-  if (eventsView === "day") {
-    const list = eventsOf(currentKid, selectedDate);
-    let html = `<div class="evt-day-title">${fmtDate(selectedDate)}</div>`;
-    if (list.length === 0) {
-      html += `<div class="evt-empty">일정이 없어요. 아래에서 추가해 보세요!</div>`;
-    } else {
-      html += `<ul class="evt-list">` + list.map((e, i) => `
-        <li>
-          <span class="evt-time" style="color:${color}">${escapeHtml(e.time || "")}</span>
-          <span>${escapeHtml(e.text)}</span>
-          <button class="del" data-i="${i}">✕</button>
-        </li>`).join("") + `</ul>`;
-    }
-    area.innerHTML = html;
-    area.querySelectorAll(".del").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const arr = list.filter((_, i) => i !== Number(btn.dataset.i));
-        store.write(`${currentKid}/events/${selectedDate}`, arr.length ? arr : null);
-      });
-    });
-  } else {
-    const weekStart = shiftDate(selectedDate, -parseDate(selectedDate).getDay());
-    const weekEnd = shiftDate(weekStart, 6);
-    const label = `${parseDate(weekStart).getMonth()+1}/${parseDate(weekStart).getDate()} ~ ${parseDate(weekEnd).getMonth()+1}/${parseDate(weekEnd).getDate()}`;
-    const today = todayStr();
-    let html = `
-      <div class="date-nav">
-        <button id="prevWeek">◀</button>
-        <span class="cur">${label}</span>
-        <button id="nextWeek">▶</button>
-      </div><ul class="week-list">`;
-    for (let i = 0; i < 7; i++) {
-      const ds = shiftDate(weekStart, i);
-      const list = eventsOf(currentKid, ds);
-      const evts = list.length
-        ? list.map(e => `<span>${e.time ? `<b style="color:${color}">${escapeHtml(e.time)}</b> ` : ""}${escapeHtml(e.text)}</span>`).join("")
-        : `<span class="week-empty">—</span>`;
-      html += `
-        <li class="${ds === today ? "todayrow" : ""}" data-date="${ds}">
-          <span class="week-day" style="${ds === today ? `color:${color}` : ""}">${parseDate(ds).getMonth()+1}/${parseDate(ds).getDate()} (${["일","월","화","수","목","금","토"][parseDate(ds).getDay()]})</span>
-          <span class="week-evts">${evts}</span>
-        </li>`;
-    }
-    html += `</ul>`;
-    area.innerHTML = html;
-    document.getElementById("prevWeek").addEventListener("click", () => { selectedDate = shiftDate(selectedDate, -7); render(); });
-    document.getElementById("nextWeek").addEventListener("click", () => { selectedDate = shiftDate(selectedDate, 7); render(); });
-    area.querySelectorAll(".week-list li").forEach(li => {
-      li.addEventListener("click", () => { selectedDate = li.dataset.date; eventsView = "day"; render(); });
-    });
-  }
+// 메모 내용에 따라 항상 같은 파스텔 색이 배정됨
+const EVT_COLORS = [
+  { bg: "#E8DFF3", fg: "#5B4874" }, // 보라
+  { bg: "#DEEAF5", fg: "#3D5A78" }, // 파랑
+  { bg: "#E3EFE0", fg: "#47663F" }, // 초록
+  { bg: "#F7E8D8", fg: "#7A5A33" }, // 주황
+  { bg: "#F5DEE3", fg: "#7A4050" }, // 분홍
+  { bg: "#EFEADB", fg: "#6E6233" }, // 노랑
+];
+function evtColor(text) {
+  let h = 0;
+  for (const ch of String(text)) h = (h * 31 + ch.codePointAt(0)) % 997;
+  return EVT_COLORS[h % EVT_COLORS.length];
 }
 
 function renderSchedule() {
   const kid = data[currentKid];
-  const tbody = document.getElementById("schedBody");
-  tbody.innerHTML = "";
-  kid.schedule.forEach((row, idx) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td class="time" style="color:${KIDS[currentKid].color}">${escapeHtml(row.time)}</td>
-      <td>${escapeHtml(row.text)}${editingSched ? `<button class="del">✕</button>` : ""}</td>`;
-    if (editingSched) {
-      tr.querySelector(".del").addEventListener("click", () => {
-        const sched = kid.schedule.filter((_, i) => i !== idx);
-        store.write(`${currentKid}/schedule`, sched);
-      });
-    }
-    tbody.appendChild(tr);
+  const ul = document.getElementById("schedList");
+  ul.innerHTML = `<li class="head"><span class="s-time" style="color:#8B8680">시간</span><span class="s-label">해야 할 일</span></li>`;
+  const rowCount = Math.max(10, kid.schedule.length + 1);
+  for (let i = 0; i < rowCount; i++) {
+    const item = kid.schedule[i];
+    const li = document.createElement("li");
+    li.dataset.time = item ? item.time : "";
+    li.dataset.end = item && item.end ? item.end : "";
+    const timeLabel = li.dataset.time
+      ? `${escapeHtml(li.dataset.time)}${li.dataset.end ? `~${escapeHtml(li.dataset.end)}` : ""}` : "";
+    li.innerHTML = `
+      <span class="s-time">${timeLabel}</span>
+      <input class="s-text" maxlength="30" value="${item ? escapeHtml(item.text) : ""}">
+      ${item ? `<button class="del">✕</button>` : ""}`;
+    li.addEventListener("click", () => selectSchedRow(i));
+    const txt = li.querySelector(".s-text");
+    txt.addEventListener("focus", () => selectSchedRow(i));
+    txt.addEventListener("change", saveScheduleFromRows);
+    txt.addEventListener("keydown", e => { if (e.key === "Enter") txt.blur(); });
+    const del = li.querySelector(".del");
+    if (del) del.addEventListener("click", () => {
+      txt.value = ""; li.dataset.time = ""; li.dataset.end = "";
+      saveScheduleFromRows();
+    });
+    ul.appendChild(li);
+  }
+  highlightSchedRow();
+  renderTimeline(kid.schedule, document.getElementById("schedTimeline"));
+}
+
+function schedRows() {
+  return document.querySelectorAll("#schedList li:not(.head)");
+}
+
+function selectSchedRow(i) {
+  selectedSchedRow = i;
+  highlightSchedRow();
+  // 선택한 줄에 이미 시간이 있으면 아래 입력칸에 보여줌
+  const li = schedRows()[i];
+  if (li && li.dataset.time) {
+    document.getElementById("schedStart").value = li.dataset.time;
+    document.getElementById("schedEnd").value = li.dataset.end || "";
+  }
+}
+
+// 선택 표시만 갱신 (아래 시간 입력칸은 건드리지 않음)
+function highlightSchedRow() {
+  schedRows().forEach((li, i) => {
+    li.classList.toggle("sel", i === selectedSchedRow);
   });
-  document.getElementById("schedAddRow").style.display = editingSched ? "flex" : "none";
-  const btn = document.getElementById("editSchedBtn");
-  btn.textContent = editingSched ? "완료" : "편집";
-  btn.classList.toggle("editing", editingSched);
+}
+
+// 왼쪽 표의 모든 줄을 읽어 계획표로 저장
+function saveScheduleFromRows() {
+  const sched = [];
+  for (const li of schedRows()) {
+    const t = li.dataset.time;
+    const e = li.dataset.end;
+    const x = li.querySelector(".s-text").value.trim();
+    if (!t && !x) continue;
+    sched.push({ time: t, end: (e && e > t) ? e : "", text: x });
+  }
+  store.write(`${currentKid}/schedule`, sched);
+}
+
+function renderTimeline(schedule, tl) {
+  tl.innerHTML = "";
+  const items = schedule.filter(r => /^\d{1,2}:\d{2}$/.test(r.time))
+    .slice().sort((a, b) => a.time.localeCompare(b.time));
+  const toH = s => { const [h, m] = s.split(":").map(Number); return h + m / 60; };
+  // 각 활동의 구간: 시작 ~ 끝 (끝이 없으면 1시간)
+  const spans = items.map(r => {
+    const s = toH(r.time);
+    const e = (r.end && /^\d{1,2}:\d{2}$/.test(r.end) && toH(r.end) > s) ? toH(r.end) : Math.min(s + 1, 24);
+    return { s, e, text: r.text };
+  });
+  // 기본 범위: 08시 ~ 24시 (더 이른 할 일이 있으면 그만큼 확장)
+  const dayStart = Math.floor(Math.min(8, ...spans.map(sp => sp.s)));
+  const dayEnd = 24;
+  const PPH = 24; // 1시간당 픽셀 (세로)
+
+  let html = `<div class="vt-head">타임라인</div>
+    <div class="vt" style="height:${(dayEnd - dayStart) * PPH}px; border-radius:0 0 6px 6px"><div class="vt-divider"></div>`;
+  for (let h = dayStart + 1; h < dayEnd; h++) {
+    html += `<div class="vt-line" style="top:${(h - dayStart) * PPH}px"></div>`;
+  }
+  for (let h = dayStart; h < dayEnd; h++) {
+    html += `<span class="vt-label" style="top:${(h - dayStart) * PPH + PPH / 2}px">${h}</span>`;
+  }
+  for (const sp of spans) {
+    const c = evtColor(sp.text);
+    html += `<div class="vt-bar" style="top:${(sp.s - dayStart) * PPH + 1}px; height:${(sp.e - sp.s) * PPH - 2}px; background:${c.bg}; border:1px solid ${c.fg}55; color:${c.fg}">${escapeHtml(sp.text)}</div>`;
+  }
+  html += `</div>`;
+  tl.innerHTML = html;
 }
 
 function renderCalendar() {
@@ -616,29 +732,37 @@ function renderCalendar() {
   const today = todayStr();
   const { y: year, m: month } = calCursor;
   document.getElementById("curMonth").textContent = `${year}년 ${month}월`;
-  document.getElementById("calLegend").style.display =
-    (year === 2026 && (month === 7 || month === 8)) ? "flex" : "none";
+  const legend = document.getElementById("calLegend");
+  const kidInfo = KIDS[currentKid];
+  const vs = parseDate(kidInfo.vacStart), ve = parseDate(shiftDate(kidInfo.schoolStart, -1));
+  legend.innerHTML = `<span><i class="bar" style="height:10px"></i>${kidInfo.name} 방학 (${vs.getMonth()+1}/${vs.getDate()} ~ ${ve.getMonth()+1}/${ve.getDate()})</span>`;
+  legend.style.display = (year === 2026 && (month === 7 || month === 8)) ? "flex" : "none";
 
   const first = new Date(year, month-1, 1);
   const daysInMonth = new Date(year, month, 0).getDate();
+  const startOffset = first.getDay();
+  const totalCells = Math.ceil((startOffset + daysInMonth) / 7) * 7;
   let html = `<div class="cal-month"><div class="cal-grid">`;
   ["일","월","화","수","목","금","토"].forEach((d, i) => {
     html += `<div class="dow ${i === 0 ? "sun" : ""}">${d}</div>`;
   });
-  for (let i = 0; i < first.getDay(); i++) html += `<div class="cal-cell other"></div>`;
-  for (let d = 1; d <= daysInMonth; d++) {
-    const ds = `${year}-${String(month).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-    const dow = new Date(year, month-1, d).getDay();
-    let bars = "";
-    for (const [key, kid] of Object.entries(KIDS)) {
-      if (ds >= kid.vacStart && ds < kid.schoolStart) bars += `<div class="bar ${key}"></div>`;
-    }
-    const dot = eventsOf(currentKid, ds).length ? `<div class="evt-dot"></div>` : "";
+  for (let c = 0; c < totalCells; c++) {
+    const d = new Date(year, month-1, c - startOffset + 1);
+    const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    const inMonth = d.getMonth() === month - 1;
+    const bars = (ds >= kidInfo.vacStart && ds < kidInfo.schoolStart) ? `<div class="bar"></div>` : "";
+    const evts = eventsOf(currentKid, ds);
+    let chips = evts.slice(0, 2).map(e => {
+      const c = evtColor(e.text);
+      return `<div class="cal-evt" style="background:${c.bg}; color:${c.fg}">${escapeHtml(e.text)}</div>`;
+    }).join("");
+    if (evts.length > 2) chips += `<div class="cal-more">+${evts.length - 2}</div>`;
     const cls = ["cal-cell"];
-    if (dow === 0) cls.push("sun");
+    if (!inMonth) cls.push("dim");
+    if (d.getDay() === 0) cls.push("sun");
     if (ds === today) cls.push("today");
     if (ds === selectedDate) cls.push("selected");
-    html += `<div class="${cls.join(" ")}" data-date="${ds}">${dot}<span class="num">${d}</span><div class="cal-bars">${bars}</div></div>`;
+    html += `<div class="${cls.join(" ")}" data-date="${ds}"><span class="num">${d.getDate()}</span>${chips}<div class="cal-bars">${bars}</div></div>`;
   }
   html += `</div></div>`;
   cal.insertAdjacentHTML("beforeend", html);
@@ -647,8 +771,39 @@ function renderCalendar() {
     cell.addEventListener("click", () => {
       selectedDate = cell.dataset.date;
       render();
-      document.querySelector(".tabs").scrollIntoView({ behavior: "smooth" });
     });
+  });
+}
+
+function renderCalMemo() {
+  const box = document.getElementById("calMemo");
+  const list = eventsOf(currentKid, selectedDate);
+  let html = `<div class="memo-title"><svg class="icon" style="width:13px;height:13px;vertical-align:-2px" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg> ${fmtDate(selectedDate)} 메모</div>`;
+  if (list.length) {
+    html += `<ul class="evt-list">` + list.map((e, i) => {
+      const c = evtColor(e.text);
+      return `
+      <li>${e.time ? `<span class="evt-time" style="color:${KIDS[currentKid].color}">${escapeHtml(e.time)}</span>` : ""}
+        <span style="background:${c.bg}; color:${c.fg}; border-radius:6px; padding:2px 8px">${escapeHtml(e.text)}</span>
+        <button class="del" data-i="${i}">✕</button></li>`;
+    }).join("") + `</ul>`;
+  }
+  html += `<div class="add-row"><input id="calMemoText" placeholder="메모 입력 (예: 할머니 댁)" maxlength="40"><button id="calMemoAdd">추가</button></div>`;
+  box.innerHTML = html;
+  box.querySelectorAll(".del").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const arr = list.filter((_, i) => i !== Number(btn.dataset.i));
+      store.write(`${currentKid}/events/${selectedDate}`, arr.length ? arr : null);
+    });
+  });
+  document.getElementById("calMemoAdd").addEventListener("click", () => {
+    const input = document.getElementById("calMemoText");
+    const text = input.value.trim();
+    if (!text) return;
+    store.write(`${currentKid}/events/${selectedDate}`, [...list, { time: "", text }]);
+  });
+  document.getElementById("calMemoText").addEventListener("keydown", e => {
+    if (e.key === "Enter") document.getElementById("calMemoAdd").click();
   });
 }
 
@@ -673,25 +828,28 @@ document.getElementById("nextDay").addEventListener("click", () => { selectedDat
 document.getElementById("goToday").addEventListener("click", () => { selectedDate = todayStr(); render(); });
 document.getElementById("prevMonth").addEventListener("click", () => shiftMonth(-1));
 document.getElementById("nextMonth").addEventListener("click", () => shiftMonth(1));
-document.getElementById("goThisMonth").addEventListener("click", () => {
-  const t = new Date();
-  calCursor = { y: t.getFullYear(), m: t.getMonth() + 1 };
-  renderCalendar();
+document.getElementById("setTimeBtn").addEventListener("click", () => {
+  const li = schedRows()[selectedSchedRow];
+  if (!li) return;
+  const start = document.getElementById("schedStart").value;
+  const end = document.getElementById("schedEnd").value;
+  if (start) { // 시간을 비워두고 등록하면 기존 시간 유지
+    li.dataset.time = start;
+    li.dataset.end = (end && end > start) ? end : "";
+    document.getElementById("schedStart").value = "";
+    document.getElementById("schedEnd").value = "";
+  }
+  saveScheduleFromRows(); // 할 일 텍스트와 시간을 모두 반영
 });
-document.getElementById("viewDay").addEventListener("click", () => { eventsView = "day"; renderEvents(); });
-document.getElementById("viewWeek").addEventListener("click", () => { eventsView = "week"; renderEvents(); });
-document.getElementById("addEvtBtn").addEventListener("click", () => {
-  const timeIn = document.getElementById("newEvtTime");
-  const textIn = document.getElementById("newEvtText");
-  const text = textIn.value.trim();
-  if (!text) return;
-  const list = [...eventsOf(currentKid, selectedDate), { time: timeIn.value.trim(), text }]
-    .sort((a, b) => (a.time || "99:99").localeCompare(b.time || "99:99"));
-  timeIn.value = ""; textIn.value = "";
-  store.write(`${currentKid}/events/${selectedDate}`, list);
+document.getElementById("addPhoneBtn").addEventListener("click", () => {
+  const nameIn = document.getElementById("newPhoneName");
+  const numIn = document.getElementById("newPhoneNum");
+  const name = nameIn.value.trim(), phone = numIn.value.trim();
+  if (!name || !phone) return;
+  nameIn.value = ""; numIn.value = "";
+  store.write("phonebook", [...(data.phonebook || []), { name, phone }]);
 });
 document.getElementById("editItemsBtn").addEventListener("click", () => { editingItems = !editingItems; render(); });
-document.getElementById("editSchedBtn").addEventListener("click", () => { editingSched = !editingSched; render(); });
 document.getElementById("addItemBtn").addEventListener("click", () => {
   const input = document.getElementById("newItemText");
   const text = input.value.trim();
@@ -699,15 +857,6 @@ document.getElementById("addItemBtn").addEventListener("click", () => {
   const items = [...data[currentKid].items, { id: "i" + Date.now(), text }];
   input.value = "";
   store.write(`${currentKid}/items`, items);
-});
-document.getElementById("addSchedBtn").addEventListener("click", () => {
-  const timeIn = document.getElementById("newSchedTime");
-  const textIn = document.getElementById("newSchedText");
-  if (!timeIn.value.trim() || !textIn.value.trim()) return;
-  const sched = [...data[currentKid].schedule, { time: timeIn.value.trim(), text: textIn.value.trim() }]
-    .sort((a, b) => a.time.localeCompare(b.time));
-  timeIn.value = ""; textIn.value = "";
-  store.write(`${currentKid}/schedule`, sched);
 });
 
 document.getElementById("todayLabel").textContent = "오늘은 " + fmtDate(todayStr());
