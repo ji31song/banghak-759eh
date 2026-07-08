@@ -433,6 +433,18 @@ async function initStore() {
             return; // 변환된 데이터가 다시 수신됨
           }
         }
+        // 예전 공용 전화번호부가 남아 있으면 모든 가족의 개인 전화번호부로 복사
+        if (v.phonebook) {
+          const shared = Array.isArray(v.phonebook) ? v.phonebook : Object.values(v.phonebook);
+          const updates = { phonebook: null };
+          for (const kid of MEMBER_KEYS) {
+            const own = v[kid] && v[kid].phonebook
+              ? (Array.isArray(v[kid].phonebook) ? v[kid].phonebook : Object.values(v[kid].phonebook)) : [];
+            updates[`${kid}/phonebook`] = [...own, ...shared];
+          }
+          dbMod.update(rootRef, updates);
+          return;
+        }
         data = normalize(v);
         render();
       });
@@ -467,8 +479,6 @@ async function initStore() {
 
 // Firebase는 빈 객체/배열을 지우기 때문에 형태 보정
 function normalize(v) {
-  if (!v.phonebook) v.phonebook = [];
-  if (!Array.isArray(v.phonebook)) v.phonebook = Object.values(v.phonebook);
   for (const kid of MEMBER_KEYS) {
     if (!v[kid]) v[kid] = JSON.parse(JSON.stringify(DEFAULT_DATA[kid]));
     if (!v[kid].items) v[kid].items = [];
@@ -476,6 +486,8 @@ function normalize(v) {
     if (!v[kid].checks) v[kid].checks = {};
     if (!v[kid].events) v[kid].events = {};
     if (!v[kid].grapes) v[kid].grapes = {};
+    if (!v[kid].phonebook) v[kid].phonebook = [];
+    if (!Array.isArray(v[kid].phonebook)) v[kid].phonebook = Object.values(v[kid].phonebook);
     if (!Array.isArray(v[kid].items)) v[kid].items = Object.values(v[kid].items);
     // 예전 형식(날짜 없는 배열)은 오늘 날짜의 계획으로 옮김
     if (Array.isArray(v[kid].schedule)) {
@@ -487,6 +499,12 @@ function normalize(v) {
     for (const d of Object.keys(v[kid].events)) {
       if (!Array.isArray(v[kid].events[d])) v[kid].events[d] = Object.values(v[kid].events[d]);
     }
+  }
+  // 예전 공용 전화번호부가 있으면 각자에게 복사 (로컬 저장 모드용)
+  if (v.phonebook) {
+    const shared = Array.isArray(v.phonebook) ? v.phonebook : Object.values(v.phonebook);
+    for (const kid of MEMBER_KEYS) v[kid].phonebook.push(...shared);
+    delete v.phonebook;
   }
   return v;
 }
@@ -506,7 +524,7 @@ function render() {
 
 function renderPhonebook() {
   const ul = document.getElementById("phoneList");
-  const book = data.phonebook || [];
+  const book = data[currentKid].phonebook || [];
   ul.innerHTML = "";
   if (!book.length) {
     ul.innerHTML = `<li class="empty">아래에서 자주 거는 번호를 등록해 두세요</li>`;
@@ -520,7 +538,7 @@ function renderPhonebook() {
       <a class="call-btn" href="${telHref}"><svg class="icon" style="width:12px;height:12px;vertical-align:-1px" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> 전화</a>
       <button class="del">✕</button>`;
     li.querySelector(".del").addEventListener("click", () => {
-      store.write("phonebook", book.filter((_, i) => i !== idx));
+      store.write(`${currentKid}/phonebook`, book.filter((_, i) => i !== idx));
     });
     ul.appendChild(li);
   });
@@ -842,7 +860,7 @@ document.getElementById("addPhoneBtn").addEventListener("click", () => {
   const name = nameIn.value.trim(), phone = numIn.value.trim();
   if (!name || !phone) return;
   nameIn.value = ""; numIn.value = "";
-  store.write("phonebook", [...(data.phonebook || []), { name, phone }]);
+  store.write(`${currentKid}/phonebook`, [...(data[currentKid].phonebook || []), { name, phone }]);
 });
 document.getElementById("editItemsBtn").addEventListener("click", () => { editingItems = !editingItems; render(); });
 document.getElementById("addItemBtn").addEventListener("click", () => {
