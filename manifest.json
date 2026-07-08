@@ -1,0 +1,16 @@
+{
+  "name": "2026 여름방학 관리",
+  "short_name": "방학관리",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#FFF8EE",
+  "theme_color": "#FFB74D",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
