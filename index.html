@@ -95,7 +95,7 @@
 
   .add-row { display: flex; gap: 8px; margin-top: 12px; }
   .add-row input {
-    flex: 1; border: 1.5px solid #DBD7D1; border-radius: 10px; padding: 10px 12px; font-size: 14px;
+    flex: 1; min-width: 0; border: 1.5px solid #DBD7D1; border-radius: 10px; padding: 10px 12px; font-size: 14px;
     background: #FCFBFA;
   }
   .add-row button {
@@ -132,16 +132,12 @@
     display: flex; flex-direction: column; justify-content: center; text-align: center;
     font-size: 10px; font-weight: 700; color: #4A7DB5; line-height: 1.4;
   }
-  #schedList .t-btn {
-    flex: 1; border: none; background: transparent; font-family: inherit;
-    font-size: 10px; font-weight: 700; color: #4A7DB5; cursor: pointer; padding: 0;
+  #schedList .s-time input {
+    width: 100%; min-width: 0; flex: 1; border: none; background: transparent; font-family: inherit;
+    font-size: 10px; font-weight: 700; color: #4A7DB5; text-align: center; outline: none; padding: 0;
   }
-  #schedList .t-btn.empty { color: #C8C4BD; font-weight: 400; font-size: 9px; }
-  #schedList .t-btn + .t-btn { border-top: 1px dashed #E2DED7; }
-  #schedList .s-time input[type=time] {
-    position: absolute; left: 0; bottom: 0; width: 1px; height: 1px;
-    opacity: 0; pointer-events: none; border: 0; padding: 0;
-  }
+  #schedList .s-time input::placeholder { color: #C8C4BD; font-weight: 400; font-size: 9px; }
+  #schedList .s-time input + input { border-top: 1px dashed #E2DED7; }
   #schedList input.s-text {
     flex: 1; min-width: 0; border: none; background: transparent;
     font-size: 13px; padding: 8px 2px; outline: none; align-self: center;
@@ -168,13 +164,15 @@
   .cal-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; background: #3B3835; }
   .cal-month { margin-top: 14px; }
   .cal-month h3 { font-size: 14px; text-align: center; margin-bottom: 8px; }
-  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .cal-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;
+    grid-template-rows: auto; grid-auto-rows: 74px; /* 요일 줄만 자동, 날짜 줄은 높이 고정 */
+  }
   .cal-grid .dow { text-align: center; font-size: 11px; color: #B2ADA6; padding: 3px 0; }
   .cal-grid .dow.sun { color: #C96B6B; }
-  .cal-grid { gap: 2px; }
   .cal-cell {
     position: relative; text-align: center; padding: 3px 1px 8px; border-radius: 8px;
-    font-size: 12px; cursor: pointer; min-height: 68px;
+    font-size: 12px; cursor: pointer; overflow: hidden;
     border: 1px solid #F0EEEA; background: #FDFCFB;
   }
   .cal-cell.dim { background: transparent; border-color: transparent; }
@@ -288,7 +286,7 @@
   </section>
 
   <section class="card">
-    <h2><span class="h2t"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="6" height="6" rx="1"/><path d="m3 17 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg>To-do list</span></h2>
+    <h2><span class="h2t"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="6" height="6" rx="1"/><path d="m3 17 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg>To-do list</span> <button class="edit-btn" id="editSchedBtn">항목 편집</button></h2>
     <div class="date-nav">
       <button id="schedPrevDay">◀</button>
       <span class="cur" id="schedCurDate"></span>
@@ -299,7 +297,7 @@
       <ul id="schedList"></ul>
       <div id="schedTimeline"></div>
     </div>
-    <div class="sched-hint">시작시간 · 종료시간 버튼을 누르면 시계가 떠요</div>
+    <div class="sched-hint">시간은 숫자로 입력하세요 · 예) 930 → 09:30, 1830 → 18:30</div>
   </section>
 
   <section class="card" id="commentCard">
@@ -309,7 +307,7 @@
       <select id="commentWho">
         <option>엄마</option><option>아빠</option><option>준우</option><option>유진</option>
       </select>
-      <input id="commentText" placeholder="일정에 한마디 남기기" maxlength="60">
+      <input id="commentText" placeholder="한마디 남기기" maxlength="60">
       <button id="commentAdd">추가</button>
     </div>
   </section>
@@ -408,6 +406,7 @@ let data = null;
 let currentKid = "junwoo";
 let selectedDate = todayStr();
 let editingItems = false;
+let editingSched = false;
 let calCursor = { y: new Date().getFullYear(), m: new Date().getMonth() + 1 };
 
 function todayStr() {
@@ -446,11 +445,16 @@ async function initStore() {
           dbMod.set(rootRef, DEFAULT_DATA);
           return;
         }
-        // 예전 형식(날짜 없는 계획표)이 남아 있으면 오늘 날짜 아래로 한 번 옮겨 저장
+        // 예전 형식(날짜 없는 계획표/항목)이 남아 있으면 오늘 날짜 아래로 한 번 옮겨 저장
         for (const kid of MEMBER_KEYS) {
           if (v[kid] && Array.isArray(v[kid].schedule)) {
             dbMod.set(dbMod.ref(db, `${FAMILY_PATH}/${kid}/schedule`), { [todayStr()]: v[kid].schedule });
             return; // 변환된 데이터가 다시 수신됨
+          }
+          if (v[kid] && Array.isArray(v[kid].items)) {
+            // 사용 시작 전 날짜를 기준으로 저장해 과거 날짜들이 기존 내용을 그대로 유지
+            dbMod.set(dbMod.ref(db, `${FAMILY_PATH}/${kid}/items`), { "2026-01-01": v[kid].items });
+            return;
           }
         }
         // 예전 공용 전화번호부가 남아 있으면 모든 가족의 개인 전화번호부로 복사
@@ -501,7 +505,14 @@ async function initStore() {
 function normalize(v) {
   for (const kid of MEMBER_KEYS) {
     if (!v[kid]) v[kid] = JSON.parse(JSON.stringify(DEFAULT_DATA[kid]));
-    if (!v[kid].items) v[kid].items = [];
+    if (!v[kid].items) v[kid].items = {};
+    // 예전 형식(날짜 없는 항목 목록)은 사용 시작 전 날짜 기준으로 옮김
+    if (Array.isArray(v[kid].items)) {
+      v[kid].items = v[kid].items.length ? { "2026-01-01": v[kid].items } : {};
+    }
+    for (const d of Object.keys(v[kid].items)) {
+      if (!Array.isArray(v[kid].items[d])) v[kid].items[d] = Object.values(v[kid].items[d]);
+    }
     if (!v[kid].schedule) v[kid].schedule = {};
     if (!v[kid].checks) v[kid].checks = {};
     if (!v[kid].events) v[kid].events = {};
@@ -512,7 +523,6 @@ function normalize(v) {
     for (const d of Object.keys(v[kid].comments)) {
       if (!Array.isArray(v[kid].comments[d])) v[kid].comments[d] = Object.values(v[kid].comments[d]);
     }
-    if (!Array.isArray(v[kid].items)) v[kid].items = Object.values(v[kid].items);
     // 예전 형식(날짜 없는 배열)은 오늘 날짜의 계획으로 옮김
     if (Array.isArray(v[kid].schedule)) {
       v[kid].schedule = v[kid].schedule.length ? { [todayStr()]: v[kid].schedule } : {};
@@ -614,8 +624,9 @@ function renderChecklist() {
   const ul = document.getElementById("checklist");
   ul.innerHTML = "";
   ul.style.color = KIDS[currentKid].color;
+  const dayItems = itemsOf(kid, selectedDate);
   let done = 0;
-  kid.items.forEach((item, idx) => {
+  dayItems.forEach((item, idx) => {
     const checked = !!checks[item.id];
     if (checked) done++;
     const li = document.createElement("li");
@@ -632,20 +643,20 @@ function renderChecklist() {
     txt.addEventListener("change", () => {
       const newText = txt.value.trim();
       const items = newText
-        ? kid.items.map((it, i) => i === idx ? { ...it, text: newText } : it)
-        : kid.items.filter((_, i) => i !== idx); // 비우면 삭제
-      store.write(`${currentKid}/items`, items);
+        ? dayItems.map((it, i) => i === idx ? { ...it, text: newText } : it)
+        : dayItems.filter((_, i) => i !== idx); // 비우면 삭제
+      store.write(`${currentKid}/items/${selectedDate}`, items);
     });
     if (editingItems) {
       li.querySelector(".del").addEventListener("click", () => {
-        const items = kid.items.filter((_, i) => i !== idx);
-        store.write(`${currentKid}/items`, items);
+        const items = dayItems.filter((_, i) => i !== idx);
+        store.write(`${currentKid}/items/${selectedDate}`, items);
       });
     }
     ul.appendChild(li);
   });
 
-  const total = kid.items.length;
+  const total = dayItems.length;
   const pct = total ? Math.round(done / total * 100) : 0;
   const bar = document.getElementById("progressBar");
   bar.style.width = pct + "%";
@@ -685,6 +696,16 @@ function renderGrapes(done, total) {
   });
 }
 
+// 해당 날짜의 체크리스트 항목: 그 날짜에 기록이 없으면 가장 가까운 이전 날짜의 항목을 이어받음
+function itemsOf(kid, dateStr) {
+  const map = kid.items || {};
+  const dates = Object.keys(map).sort();
+  let pick = null;
+  for (const d of dates) { if (d <= dateStr) pick = d; }
+  if (!pick && dates.length) pick = dates[0]; // 첫 기록 이전의 과거 날짜는 첫 기록을 보여줌
+  return pick ? map[pick] : [];
+}
+
 function eventsOf(kidKey, dateStr) {
   const ev = data[kidKey].events || {};
   return ev[dateStr] || [];
@@ -719,25 +740,23 @@ function renderSchedule() {
     li.dataset.end = item && item.end ? item.end : "";
     li.innerHTML = `
       <span class="s-time">
-        <button class="t-btn ${li.dataset.time ? "" : "empty"}">${li.dataset.time ? escapeHtml(li.dataset.time) : "시작시간"}</button>
-        <button class="t-btn ${li.dataset.end ? "" : "empty"}">${li.dataset.end ? escapeHtml(li.dataset.end) : "종료시간"}</button>
-        <input type="time" class="t-start" value="${escapeHtml(li.dataset.time)}" tabindex="-1">
-        <input type="time" class="t-end" value="${escapeHtml(li.dataset.end)}" tabindex="-1">
+        <input class="t-start" inputmode="numeric" maxlength="5" placeholder="시작시간" value="${escapeHtml(li.dataset.time)}">
+        <input class="t-end" inputmode="numeric" maxlength="5" placeholder="종료시간" value="${escapeHtml(li.dataset.end)}">
       </span>
       <input class="s-text" maxlength="30" value="${item ? escapeHtml(item.text) : ""}">
-      ${item ? `<button class="del">✕</button>` : ""}`;
+      ${item && editingSched ? `<button class="del">✕</button>` : ""}`;
     const tStart = li.querySelector(".t-start"), tEnd = li.querySelector(".t-end");
     const syncTime = () => {
-      li.dataset.time = tStart.value;
-      li.dataset.end = (tStart.value && tEnd.value > tStart.value) ? tEnd.value : "";
+      const s = parseTimeStr(tStart.value);
+      const e = parseTimeStr(tEnd.value);
+      li.dataset.time = s;
+      li.dataset.end = (s && e > s) ? e : "";
       saveScheduleFromRows();
     };
-    tStart.addEventListener("change", syncTime);
-    tEnd.addEventListener("change", syncTime);
-    // 시작시간/종료시간 버튼을 누르면 시계 선택창 팝업
-    const [startBtn, endBtn] = li.querySelectorAll(".t-btn");
-    startBtn.addEventListener("click", () => { try { tStart.showPicker(); } catch (e) { tStart.focus(); } });
-    endBtn.addEventListener("click", () => { try { tEnd.showPicker(); } catch (e) { tEnd.focus(); } });
+    [tStart, tEnd].forEach(inp => {
+      inp.addEventListener("change", syncTime);
+      inp.addEventListener("keydown", ev => { if (ev.key === "Enter") inp.blur(); });
+    });
     const txt = li.querySelector(".s-text");
     txt.addEventListener("change", saveScheduleFromRows);
     txt.addEventListener("keydown", e => { if (e.key === "Enter") txt.blur(); });
@@ -748,7 +767,21 @@ function renderSchedule() {
     });
     ul.appendChild(li);
   }
+  const sBtn = document.getElementById("editSchedBtn");
+  sBtn.textContent = editingSched ? "완료" : "항목 편집";
+  sBtn.classList.toggle("editing", editingSched);
   renderTimeline(sched, document.getElementById("schedTimeline"));
+}
+
+// "1830", "930", "18:30" 같은 입력을 "18:30" 형식으로 변환 (잘못된 값은 빈 문자열)
+function parseTimeStr(s) {
+  const d = String(s).replace(/[^0-9]/g, "");
+  if (!d) return "";
+  let h, m;
+  if (d.length <= 2) { h = Number(d); m = 0; }
+  else { h = Number(d.slice(0, d.length - 2)); m = Number(d.slice(-2)); }
+  if (h > 23 || m > 59) return "";
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 
 function schedRows() {
@@ -930,13 +963,14 @@ document.getElementById("commentText").addEventListener("keydown", e => {
   if (e.key === "Enter") document.getElementById("commentAdd").click();
 });
 document.getElementById("editItemsBtn").addEventListener("click", () => { editingItems = !editingItems; render(); });
+document.getElementById("editSchedBtn").addEventListener("click", () => { editingSched = !editingSched; render(); });
 document.getElementById("addItemBtn").addEventListener("click", () => {
   const input = document.getElementById("newItemText");
   const text = input.value.trim();
   if (!text) return;
-  const items = [...data[currentKid].items, { id: "i" + Date.now(), text }];
+  const items = [...itemsOf(data[currentKid], selectedDate), { id: "i" + Date.now(), text }];
   input.value = "";
-  store.write(`${currentKid}/items`, items);
+  store.write(`${currentKid}/items/${selectedDate}`, items);
 });
 
 document.getElementById("todayLabel").textContent = "오늘은 " + fmtDate(todayStr());
