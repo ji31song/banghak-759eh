@@ -322,6 +322,21 @@
   #lockScreen { background: var(--cream); }
   #pinBtn { background: var(--grape); }
   footer { color: var(--muted); }
+
+  #confirmModal {
+    position: fixed; inset: 0; z-index: 200; background: rgba(63,55,47,0.45);
+    display: flex; align-items: center; justify-content: center; padding: 24px;
+  }
+  .cm-box {
+    background: #fff; border-radius: 22px; padding: 24px 20px 16px; max-width: 320px; width: 100%;
+    text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  }
+  .cm-box .cm-emoji { font-size: 36px; }
+  .cm-box p { font-size: 15px; color: var(--ink); font-weight: 700; margin: 10px 0 18px; white-space: pre-line; line-height: 1.5; }
+  .cm-btns { display: flex; gap: 8px; }
+  .cm-btns button { flex: 1; border: none; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 800; cursor: pointer; font-family: inherit; }
+  #cmCancel { background: #F1EDE3; color: var(--ink2); }
+  #cmOk { background: var(--grape); color: #fff; }
 </style>
 </head>
 <body>
@@ -419,6 +434,17 @@
   </section>
 
   <footer>달력에서 날짜를 누르면 바로 메모를 쓸 수 있어요</footer>
+</div>
+
+<div id="confirmModal" style="display:none">
+  <div class="cm-box">
+    <div class="cm-emoji">🍇</div>
+    <p id="cmMsg"></p>
+    <div class="cm-btns">
+      <button id="cmCancel">취소</button>
+      <button id="cmOk">확인</button>
+    </div>
+  </div>
 </div>
 
 <script src="firebase-config.js"></script>
@@ -706,6 +732,18 @@ function renderTabs() {
   });
 }
 
+function askConfirm(msg, okLabel, onOk, onCancel) {
+  const modal = document.getElementById("confirmModal");
+  const okBtn = document.getElementById("cmOk");
+  const cancelBtn = document.getElementById("cmCancel");
+  document.getElementById("cmMsg").textContent = msg;
+  okBtn.textContent = okLabel || "확인";
+  modal.style.display = "flex";
+  const close = () => { modal.style.display = "none"; okBtn.onclick = null; cancelBtn.onclick = null; };
+  okBtn.onclick = () => { close(); if (onOk) onOk(); };
+  cancelBtn.onclick = () => { close(); if (onCancel) onCancel(); };
+}
+
 function renderChecklist() {
   const kid = data[currentKid];
   const checks = (kid.checks && kid.checks[selectedDate]) || {};
@@ -726,6 +764,14 @@ function renderChecklist() {
       <input class="txt" maxlength="30" value="${escapeHtml(item.text)}">
       ${editingItems ? `<button class="del">✕</button>` : ""}`;
     li.querySelector("input[type=checkbox]").addEventListener("change", (e) => {
+      // 이미 포도알을 받은 날 체크를 해제하면 포도알 회수 확인
+      if (!e.target.checked && (kid.grapes || {})[selectedDate]) {
+        askConfirm("체크를 해제하면\n이 날짜의 포도알이 회수됩니다", "회수할게요", () => {
+          store.write(`${currentKid}/grapes/${selectedDate}`, null);
+          store.write(`${currentKid}/checks/${selectedDate}/${item.id}`, null);
+        }, () => { e.target.checked = true; });
+        return;
+      }
       store.write(`${currentKid}/checks/${selectedDate}/${item.id}`, e.target.checked ? true : null);
     });
     const txt = li.querySelector(".txt");
