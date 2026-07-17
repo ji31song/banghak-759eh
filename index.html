@@ -255,14 +255,15 @@
   body { background: var(--cream); color: var(--ink2); }
   .wrap { padding: 14px 16px 40px; }
 
-  header { text-align: left; padding: 8px 2px 2px; display: flex; align-items: center; gap: 10px; position: relative; }
-  header .hero { width: 82px; height: 82px; object-fit: contain; flex-shrink: 0; }
-  header .head-txt { flex: 1; min-width: 0; }
-  header h1 { font-size: 23px; font-weight: 800; color: var(--ink); letter-spacing: -0.5px; }
-  header .today { font-size: 13px; color: var(--muted); margin-top: 3px; }
-  #syncStatus { margin-top: 7px; background: var(--sage-pill); color: var(--sage-ink); font-weight: 700; }
-  #syncStatus.on { background: var(--sage-pill); color: var(--sage-ink); }
-  #syncStatus::before { color: var(--sage); }
+  header {
+    text-align: left; padding: 12px 4px 4px; display: flex; align-items: center;
+    justify-content: center; gap: 14px; position: relative;
+  }
+  header .hero { width: 92px; height: 92px; object-fit: contain; flex-shrink: 0; }
+  header .head-txt { flex: 0 1 auto; min-width: 0; }
+  header h1 { font-size: 25px; font-weight: 800; color: var(--ink); letter-spacing: -0.5px; }
+  header .today { font-size: 14px; color: var(--muted); margin-top: 5px; }
+  #syncStatus { display: none; }
 
   .tabs { gap: 8px; margin-top: 14px; }
   .tab {
