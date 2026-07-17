@@ -89,9 +89,10 @@
   }
   .grape-done { text-align: center; font-size: 14px; color: #7C5296; font-weight: 700; padding: 4px 0; }
   .grape-count { font-size: 12px; color: #8B8680; margin-bottom: 6px; }
-  .grape-board { display: grid; grid-template-columns: repeat(15, 1fr); gap: 5px; }
+  .grape-board { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; }
   .grape-board .grape { width: 100%; aspect-ratio: 1; border-radius: 50%; background: #EFECE7; border: 1px solid #E2DED7; }
-  .grape-board .grape.on { background: #8E62AC; border-color: #7C5296; }
+  .grape-board .grape.on { background: none; border: none; }
+  .grape-board .grape svg { display: block; width: 100%; height: 100%; }
 
   .add-row { display: flex; gap: 8px; margin-top: 12px; }
   .add-row input {
@@ -679,6 +680,26 @@ function renderChecklist() {
   renderGrapes(done, total);
 }
 
+// 포도알 디자인 5종 — 획득한 날짜에 따라 정해져서 어느 기기에서나 같게 보임
+const GRAPE_SVGS = [
+  // 방긋 웃는 포도알
+  `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#8E62AC" stroke="#7C5296"/><circle cx="8.5" cy="10" r="1.3" fill="#F5F3F0"/><circle cx="15.5" cy="10" r="1.3" fill="#F5F3F0"/><path d="M8 14 Q12 18 16 14" stroke="#F5F3F0" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>`,
+  // 활짝 웃는 포도알
+  `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#7C5296" stroke="#6A4581"/><path d="M6.5 9.5 Q8.5 8 10.5 9.5" stroke="#F5F3F0" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M13.5 9.5 Q15.5 8 17.5 9.5" stroke="#F5F3F0" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M8 13.5 Q12 19 16 13.5 Z" fill="#F5F3F0"/></svg>`,
+  // 윙크 포도알
+  `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#9A70B8" stroke="#7C5296"/><circle cx="8.5" cy="10" r="1.3" fill="#F5F3F0"/><path d="M13.8 10 Q15.5 8.6 17.2 10" stroke="#F5F3F0" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M9 14.5 Q12 17 15 14.5" stroke="#F5F3F0" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>`,
+  // 발그레 포도알
+  `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#8E62AC" stroke="#7C5296"/><circle cx="8.5" cy="9.5" r="1.3" fill="#F5F3F0"/><circle cx="15.5" cy="9.5" r="1.3" fill="#F5F3F0"/><circle cx="6.8" cy="12.8" r="1.6" fill="#C99BD8" opacity="0.85"/><circle cx="17.2" cy="12.8" r="1.6" fill="#C99BD8" opacity="0.85"/><path d="M10 14.5 Q12 16.5 14 14.5" stroke="#F5F3F0" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>`,
+  // 포도쥬스 (가끔 걸리는 보너스!)
+  `<svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="15" rx="2.5" fill="#8E62AC" stroke="#7C5296"/><rect x="8" y="10" width="8" height="6" rx="1.5" fill="#F5F3F0"/><circle cx="10.7" cy="13" r="1" fill="#7C5296"/><circle cx="13.3" cy="13" r="1" fill="#7C5296"/><path d="M14.5 6 L17 2.5" stroke="#5C3D73" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+];
+
+function grapeVariant(dateStr) {
+  let h = 0;
+  for (let i = 0; i < dateStr.length; i++) h = (h * 31 + dateStr.charCodeAt(i)) % 9973;
+  return h % GRAPE_SVGS.length;
+}
+
 function renderGrapes(done, total) {
   const area = document.getElementById("grapeArea");
   const grapes = data[currentKid].grapes || {};
@@ -687,7 +708,8 @@ function renderGrapes(done, total) {
 
   if (total > 0 && done === total) {
     if (grapes[selectedDate]) {
-      html += `<div class="grape-done">${fmtDate(selectedDate)} 포도알 획득!</div>`;
+      const v = grapeVariant(selectedDate);
+      html += `<div class="grape-done">${fmtDate(selectedDate)} ${v === 4 ? "포도쥬스 당첨! 🧃" : "포도알 획득!"}</div>`;
     } else {
       html += `<button class="grape-btn" id="giveGrapeBtn">다 했어요! 엄마, 포도알 주세요</button>`;
     }
@@ -701,8 +723,14 @@ function renderGrapes(done, total) {
     html += `<div class="grape-count" style="margin-top:8px">완성한 포도송이 🍇 <b>${bunches}</b>송이</div>`;
   }
   html += `<div class="grape-count" style="margin-top:${bunches > 0 ? 2 : 10}px">이번 판 포도알 <b>${cur}</b>개 (30개 모으면 포도송이 완성)</div>`;
+  // 이번 판에 해당하는 날짜들 (완성된 송이 30개 단위 제외)
+  const curDates = Object.keys(grapes).sort().slice(bunches * 30);
   html += `<div class="grape-board">`;
-  for (let i = 0; i < 30; i++) html += `<div class="grape ${i < cur ? "on" : ""}"></div>`;
+  for (let i = 0; i < 30; i++) {
+    html += i < cur
+      ? `<div class="grape on">${GRAPE_SVGS[grapeVariant(curDates[i])]}</div>`
+      : `<div class="grape"></div>`;
+  }
   html += `</div>`;
   area.innerHTML = html;
 
